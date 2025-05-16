@@ -1,0 +1,139 @@
+import { CalendarDays } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import DOMPurify from "dompurify";
+
+const NewsDetails = () => {
+  const { slug, id } = useParams();
+  const navigate = useNavigate();
+  const [latestNews, setLatest] = useState(null);
+  const [news, setNews] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const fetchNewsList = async () => {
+    try {
+      const res = await fetch(`/api/cricindia/newsapi.php`);
+      const data = await res.json();
+      setLatest(data);
+      console.log(data, "data");
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNewsList();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchNewsDetails = async () => {
+      try {
+        const res = await fetch(`/api/cricindia/newsapi.php`);
+        const data = await res.json();
+        const matchedNews = data.news.find(
+          (item) => item.id === id || item.slug === slug
+        );
+        setNews(matchedNews);
+      } catch (error) {
+        console.error("Error fetching news details:", error);
+      }
+    };
+    setLoading(true);
+    fetchNewsDetails();
+    document.body.style.overflow = "auto";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [slug, id]);
+
+  if (!loading || !news)
+    return (
+      <div className="text-center mt-10 text-gray-600 text-lg font-medium">
+        Loading...
+      </div>
+    );
+
+  return (
+    <div className="mt-12 ">
+      <div className="max-w-[1100px] mx-auto px-4  shadow-lg">
+        {/* <h4 className=" text-[#223577]  text-[24px] font-bold">News</h4> */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mt-3">
+          {/* Left: Match/News Details (9 columns) */}
+
+          <div className="md:col-span-9">
+            <h1 className="text-[24px] font-bold text-[#4B5563] mb-1">
+              {news.news_title}
+            </h1>
+            <p className="text-[14px]  text-gray-600 mb-1">
+              {news.short_description}
+            </p>
+            <div className="flex items-center gap-6 text-gray-600 mb-1">
+              <div className="flex items-center gap-2">
+                <CalendarDays size={18} />
+                {new Date(news.date_time).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </div>
+            </div>
+            {news.image && (
+              <img
+                src={`${news.image}`}
+                alt={news.news_title}
+                // height={400}
+                // style={{ height: "400px" }}
+                className="w-full  rounded mb-2 object-cover"
+              />
+            )}
+
+            {/* <div className="text-lg leading-relaxed text-gray-800 whitespace-pre-line">
+              {news.long_description}
+            </div> */}
+
+            <div
+              className="news-content text-lg leading-relaxed text-gray-800 whitespace-pre-line"
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(news.long_description),
+              }}
+            ></div>
+            <hr className="my-4" />
+          </div>
+
+          {/* Right: Latest News (3 columns) */}
+          <div className="md:col-span-3 shadow-lg p-2">
+            <h2 className="text-xl font-semibold mb-4 text-[#4B5563]">
+              Latest News
+            </h2>
+            <div className="space-y-4">
+              {latestNews?.news?.slice(0, 5).map((item, index) => (
+                <div
+                  key={index}
+                  className={`border rounded p-3 bg-gray-50 hover:bg-gray-100 cursor-pointer transition
+                  `}
+                  onClick={() => setNews(item)}
+                >
+                  <div className=" rounded-lg">
+                    <img src={`${item.image}`} alt="" className="rounded-md" />
+                  </div>
+                  <h3 className="text-sm font-medium text-[#4B5563] line-clamp-2 mt-1">
+                    {item.news_title}
+                  </h3>
+                  <p className="text-xs text-[#6B7280]">
+                    {new Date(news.date_time).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default NewsDetails;
