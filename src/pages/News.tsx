@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const News = () => {
   const [newsList, setNewsList] = useState(null);
+   const { t, i18n } = useTranslation();
   const fetchNews = async () => {
     try {
       const res = await axios.get("/api/cricindia/newsapi.php");
@@ -15,6 +17,11 @@ const News = () => {
   useEffect(() => {
     fetchNews();
   }, []);
+
+
+ useEffect(() => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}, []);
 
   const cards = [
     {

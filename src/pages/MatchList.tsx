@@ -33,7 +33,7 @@ const MatchList = () => {
     //  if (!isLive) return;
     try {
       const response = await fetch(
-        "https://api.cricapi.com/v1/cricScore?apikey=e6ecff6f-9307-4bda-bda2-bd777f48bdd9"
+        "https://api.cricapi.com/v1/cricScore?apikey=83a42805-a05c-4b77-a66b-3ac63d70f89c"
       );
       const data = await response.json();
       hasSetTodayRef.current = false;
@@ -115,7 +115,7 @@ const MatchList = () => {
   const istOffset = 5.5 * 60 * 60 * 1000;
 
   // Date range
-const startDate = new Date("2025-03-22T00:00:00Z").getTime() + istOffset;
+  const startDate = new Date("2025-03-22T00:00:00Z").getTime() + istOffset;
 const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
 
   const sortedMatches = [...matches]
@@ -332,7 +332,7 @@ const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
 
     if (loading) return <Spinner />;
 
-    return match?.hasSquad ? (
+    return match?.hasSquad  && !(match.matchStarted && (!match?.extra?.score || match?.extra?.score.length === 0)) ? (
       <Link
         key={match.id}
         to={
@@ -366,7 +366,7 @@ const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
         className={`${
           theme === "dark"
             ? " border  border-t-0 border-[#3c4043]  hover:bg-[#303134] shadow-md opacity-70 cursor-not-allowed"
-            : " border  border-[#ebebeb]  sm:border-t-0  rounded-lg cursor-not-allowed  sm:rounded-none  mt-2 sm:mt-0 "
+            : " border  border-[#ebebeb]  sm:border-t-0  rounded-lg   sm:rounded-none  mt-2 sm:mt-0 opacity-70 cursor-not-allowed"
         }`}
       >
         {matchCardContent}
