@@ -165,7 +165,7 @@ const News = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
             {newsList?.news?.map((news) => (
               <Link
-                to={`/news-detail/${news.slug}`}
+                to={`/news/${news.slug}`}
                 key={news._id}
                 className="block border rounded-lg bg-white hover:shadow-lg transition"
               >

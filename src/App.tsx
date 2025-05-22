@@ -53,7 +53,15 @@ const routes = createBrowserRouter([
     ),
   },
   {
-    path: "/getmatchdetails/:id",
+    path: "/match-preview/:id",
+    element: (
+      <MainLayout>
+        <MatchDetails />
+      </MainLayout>
+    ),
+  },
+   {
+    path: "/match-preview/:slug",
     element: (
       <MainLayout>
         <MatchDetails />
@@ -109,7 +117,7 @@ const routes = createBrowserRouter([
     ),
   },
   {
-    path: "/news-detail/:slug",
+    path: "/news/:slug",
     element: (
       <MainLayout>
         <NewsDetails />

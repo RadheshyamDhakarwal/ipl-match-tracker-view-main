@@ -33,7 +33,7 @@ const MatchList = () => {
     //  if (!isLive) return;
     try {
       const response = await fetch(
-        "https://api.cricapi.com/v1/cricScore?apikey=83a42805-a05c-4b77-a66b-3ac63d70f89c"
+        "https://api.cricapi.com/v1/cricScore?apikey=0019c810-8630-4614-a6ca-14580f56223c"
       );
       const data = await response.json();
       hasSetTodayRef.current = false;
@@ -337,7 +337,7 @@ const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
         key={match.id}
         to={
           match.matchStarted
-            ? `/getmatchdetails/${match.id}`
+            ? `/match-preview/${match.id}`
             : `/notstarted/${match.id}`
         }
         state={{

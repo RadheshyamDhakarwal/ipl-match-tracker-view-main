@@ -44,7 +44,7 @@ const MatchDetailsLayout = () => {
   const fetchMatchData = async () => {
     try {
       const res = await fetch(
-        `https://api.cricapi.com/v1/match_squad?apikey=83a42805-a05c-4b77-a66b-3ac63d70f89c&id=${id}`
+        `https://api.cricapi.com/v1/match_squad?apikey=0019c810-8630-4614-a6ca-14580f56223c&id=${id}`
       );
       const json = await res.json();
 
