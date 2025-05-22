@@ -214,8 +214,8 @@ const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
                 const isLive =
                   isToday &&
                   hasStarted &&
-                  match?.matchEnded === false &&
-                  match?.score?.length > 0;
+                  match?.matchEnded === false 
+                  // match?.score?.length > 0;
 
                 return isLive ? (
                   <span className="text-green-600 font-bold">Live</span>
