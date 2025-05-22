@@ -35,6 +35,7 @@ const MatchList = () => {
       const response = await fetch(
         "https://api.cricapi.com/v1/cricScore?apikey=83a42805-a05c-4b77-a66b-3ac63d70f89c"
       );
+      console.log(response,"response")
       const data = await response.json();
       hasSetTodayRef.current = false;
       // setLiveMatches(data);

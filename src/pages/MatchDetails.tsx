@@ -1,13 +1,11 @@
 "use client";
-
-import MatchSummaryTab from "@/components/matchdetails/SummaryTab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
-
 import ScoreCardTab from "@/components/matchdetails/ScoreCardTab";
 import { useLocation, useParams } from "react-router-dom";
 import Spinner from "./Spinner";
 import { useTheme } from "./ThemeContext";
+import ChatBox from "./ChatBox";
 
 export type MatchData = {
   id: string;
@@ -174,6 +172,60 @@ const MatchCard = () => {
     );
   };
 
+  const setCookie = (name, value, days = 7) => {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(
+      value
+    )}; expires=${expires}; `;
+  };
+
+  const getCookie = (name) => {
+    return document.cookie
+      .split("; ")
+      .find((row) => row.startsWith(name + "="))
+      ?.split("=")[1];
+  };
+
+  const checkAndRegisterGuest = async () => {
+    const guestNumber = getCookie("guestNumber");
+    const guestUsername = getCookie("guestUsername");
+    const userId = getCookie("userId");
+    // console.log(userId,"guestNumber")
+    if (guestNumber && guestUsername && userId) {
+      console.log("Guest already registered.");
+      return;
+    }
+
+    const randomNum = Math.floor(10000 + Math.random() * 90000).toString(); // 5-digit number
+    const username = `Guest-${randomNum}`;
+
+    setCookie("guestNumber", randomNum);
+    setCookie("guestUsername", username);
+    try {
+      const res = await fetch("https://cric-india.com/register_user.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: username, social_id: randomNum }),
+      });
+      console.log(res, "res");
+      if (!res.ok) throw new Error("Registration failed");
+      const data = await res.json();
+      console.log(data, "data");
+
+      if (data.userId) {
+        setCookie("userId", data.userId);
+        console.log("Guest registered:", data.userId);
+      }
+    } catch (error) {
+      console.error("Error registering guest:", error);
+    }
+  };
+
+  // Call this inside your component/page
+  useEffect(() => {
+    checkAndRegisterGuest();
+  }, []);
+
   if (loading)
     return (
       <p>
@@ -193,32 +245,42 @@ const MatchCard = () => {
   const team = teamInfo.find((t) => t.name == reorderedTeams);
 
   return (
-    <div
-      className={`${
-        theme === "dark"
-          ? "text-gray-600 bg-[#101218] w-full sm:w-[90%] md:w-[70%] lg:w-[50%] mx-auto rounded-lg shadow-md transition"
-          : "text-gray-600  w-full sm:w-[90%] md:w-[70%] lg:w-[50%] mx-auto rounded-lg shadow-md transition"
-      }`}
-    >
-      <div
-        className={`${
-          theme === "dark"
-            ? "text-sm text-gray-400 mb-2 px-4 pt-6"
-            : "text-sm text-[#5E5E5E] mb-2 px-4 pt-6 flex justify-between"
-        }`}
-      >
-        <div>
-          <span
+    <>
+      <div className=" flex">
+        <div className=" text-gray-700 w-[25%]">
+          <iframe
+            className="ms-2"
+            src="https://widget.taggbox.com/2172117"
+            // "width:100%;height:600px;border:none;"
+            style={{ height: "100%", border: "none" }}
+          ></iframe>
+        </div>
+        <div
+          className={`${
+            theme === "dark"
+              ? "text-gray-600 bg-[#101218] w-full sm:w-[90%] md:w-[70%] lg:w-[50%] mx-auto rounded-lg shadow-md transition"
+              : "text-gray-600  w-full sm:w-[90%] md:w-[70%] lg:w-[50%] mx-auto rounded-lg shadow-md transition"
+          }`}
+        >
+          <div
             className={`${
-              theme === "dark" ? "text-gray-400" : "text-[#223577]"
+              theme === "dark"
+                ? "text-sm text-gray-400 mb-2 px-4 pt-6"
+                : "text-sm text-[#5E5E5E] mb-2 px-4 pt-6 flex justify-between"
             }`}
           >
-            IPL ·
-          </span>{" "}
-          {date}
-        </div>
-        <div className="relative inline-block">
-          {/* {matchData.matchStarted && !matchData?.matchWinner  ? (
+            <div>
+              <span
+                className={`${
+                  theme === "dark" ? "text-gray-400" : "text-[#223577]"
+                }`}
+              >
+                IPL ·
+              </span>{" "}
+              {date}
+            </div>
+            <div className="relative inline-block">
+              {/* {matchData.matchStarted && !matchData?.matchWinner  ? (
             <>
               <span className="text-green-600 font-bold">Live</span>
               <div className="absolute left-0 right-0 h-[2px] bg-green-600 animate-pulse bottom-0"></div>
@@ -226,332 +288,251 @@ const MatchCard = () => {
           ) : (
             ""
           )} */}
-          {(() => {
-            const matchStart = new Date(matchData?.dateTimeGMT);
-            const today = new Date();
+              {(() => {
+                const matchStart = new Date(matchData?.dateTimeGMT);
+                const today = new Date();
 
-            const isToday = matchStart.toDateString() === today.toDateString();
-            const matchStarted = matchData?.matchStarted;
-            const noWinnerYet = !matchData?.matchWinner;
+                const isToday =
+                  matchStart.toDateString() === today.toDateString();
+                const matchStarted = matchData?.matchStarted;
+                const noWinnerYet = !matchData?.matchWinner;
 
-            return matchStarted && noWinnerYet && isToday ? (
-              <>
-                <span className="text-green-600 font-bold">Live</span>
-                <div className="absolute left-0 right-0 h-[2px] bg-green-600 animate-pulse bottom-0"></div>
-              </>
-            ) : (
-              ""
-            );
-          })()}
-        </div>
-      </div>
-
-      <div className="flex  sm:flex  sm:flex-row justify-between items-center text-center mt-4 px-4 sm:px-28  gap-4">
-        {/* Team 1 */}
-        {matchData?.matchEnded ? (
-          // If match has ended: Show the innings-based team order layout
-          matchData?.teams?.length > 0 &&
-          (() => {
-            const inningTeamOrder = [];
-            matchData?.score?.forEach((s) => {
-              const teamName = matchData?.teams?.find((team) =>
-                s.inning?.toLowerCase().includes(team.toLowerCase())
-              );
-              if (teamName) inningTeamOrder.push(teamName);
-            });
-
-            const renderedTeams = [];
-
-            inningTeamOrder.forEach((teamName, innerIndex) => {
-              const teamLogo =
-                teamInfo?.find((t) => t.name === teamName)?.img ||
-                "default-logo.png";
-              const teamScoreObj = matchData?.score?.find((s) =>
-                s.inning?.toLowerCase().includes(teamName.toLowerCase())
-              );
-
-              const scoreToShow = teamScoreObj
-                ? `${teamScoreObj.r}/${teamScoreObj.w}\n(${teamScoreObj.o})`
-                : "-";
-
-              const isLeft = innerIndex === 0;
-
-              renderedTeams.push(
-                <div
-                  key={teamName}
-                  className="flex items-center gap-2 sm:gap-7"
-                >
-                  {isLeft ? (
-                    <>
-                      <div className="flex flex-col items-center">
-                        <img
-                          src={teamLogo}
-                          alt={teamName}
-                          className="w-10 h-10 sm:w-8 sm:h-8"
-                        />
-                        <div
-                          className={`mt-2 ${
-                            theme === "dark"
-                              ? "text-[#ECECEC]"
-                              : "text-[#1F1F1F]"
-                          } text-sm sm:text-base font-medium`}
-                        >
-                          {
-                            teamInfo?.find((t) => t.name === teamName)
-                              ?.shortname
-                          }
-                        </div>
-                      </div>
-                      <div
-                        className={`${
-                          theme === "dark"
-                            ? "text-sm text-gray-400 pb-6 sm:pb-10 ml-2 sm:ml-14"
-                            : "text-sm text-[#202124] pb-6 sm:pb-10 ml-2"
-                        }`}
-                        style={{ whiteSpace: "pre-line" }}
-                      >
-                        {scoreToShow}
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div
-                        className={`${
-                          theme === "dark"
-                            ? "text-sm text-gray-400 pb-6 sm:pb-10 ml-2 sm:ml-14"
-                            : "text-sm text-[#202124] pb-6 sm:pb-10 ml-2 sm:ml-8"
-                        }`}
-                        style={{ whiteSpace: "pre-line" }}
-                      >
-                        {scoreToShow}
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <img
-                          src={teamLogo}
-                          alt={teamName}
-                          className="w-10 h-10 sm:w-8 sm:h-8"
-                        />
-                        <div
-                          className={`mt-2 ${
-                            theme === "dark"
-                              ? "text-[#ECECEC]"
-                              : "text-[#1F1F1F]"
-                          } text-sm sm:text-base font-medium`}
-                        >
-                          {
-                            teamInfo?.find((t) => t.name === teamName)
-                              ?.shortname
-                          }
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
-              );
-            });
-
-            return (
-              <div className="flex items-center justify-between w-full px-4">
-                {renderedTeams}
-              </div>
-            );
-          })()
-        ) : (
-          // If match is live: Show the fixed team 0 and team 1 layout
-          <>
-            <div className="flex items-center  gap-[100px] sm:gap-36">
-              {matchData?.teams?.map((teamName, index) => {
-                // Match score by checking if the inning includes team name
-                const scoreObj = matchData?.score?.find((s) =>
-                  s.inning?.toLowerCase().includes(teamName.toLowerCase())
+                return matchStarted && noWinnerYet && isToday ? (
+                  <>
+                    <span className="text-green-600 font-bold">Live</span>
+                    <div className="absolute left-0 right-0 h-[2px] bg-green-600 animate-pulse bottom-0"></div>
+                  </>
+                ) : (
+                  ""
                 );
+              })()}
+            </div>
+          </div>
 
-                // Match team info by name
-                const team = teamInfo?.find((t) => t.name === teamName);
+          <div className="flex  sm:flex  sm:flex-row justify-between items-center text-center mt-4 px-4 sm:px-28  gap-4">
+            {/* Team 1 */}
+            {matchData?.matchEnded ? (
+              // If match has ended: Show the innings-based team order layout
+              matchData?.teams?.length > 0 &&
+              (() => {
+                const inningTeamOrder = [];
+                matchData?.score?.forEach((s) => {
+                  const teamName = matchData?.teams?.find((team) =>
+                    s.inning?.toLowerCase().includes(team.toLowerCase())
+                  );
+                  if (teamName) inningTeamOrder.push(teamName);
+                });
 
-                // Format score or fallback
-                const score = scoreObj ? formatScore(scoreObj) : "-";
+                const renderedTeams = [];
+
+                inningTeamOrder.forEach((teamName, innerIndex) => {
+                  const teamLogo =
+                    teamInfo?.find((t) => t.name === teamName)?.img ||
+                    "default-logo.png";
+                  const teamScoreObj = matchData?.score?.find((s) =>
+                    s.inning?.toLowerCase().includes(teamName.toLowerCase())
+                  );
+
+                  const scoreToShow = teamScoreObj
+                    ? `${teamScoreObj.r}/${teamScoreObj.w}\n(${teamScoreObj.o})`
+                    : "-";
+
+                  const isLeft = innerIndex === 0;
+
+                  renderedTeams.push(
+                    <div
+                      key={teamName}
+                      className="flex items-center gap-2 sm:gap-7"
+                    >
+                      {isLeft ? (
+                        <>
+                          <div className="flex flex-col items-center">
+                            <img
+                              src={teamLogo}
+                              alt={teamName}
+                              className="w-10 h-10 sm:w-8 sm:h-8"
+                            />
+                            <div
+                              className={`mt-2 ${
+                                theme === "dark"
+                                  ? "text-[#ECECEC]"
+                                  : "text-[#1F1F1F]"
+                              } text-sm sm:text-base font-medium`}
+                            >
+                              {
+                                teamInfo?.find((t) => t.name === teamName)
+                                  ?.shortname
+                              }
+                            </div>
+                          </div>
+                          <div
+                            className={`${
+                              theme === "dark"
+                                ? "text-sm text-gray-400 pb-6 sm:pb-10 ml-2 sm:ml-14"
+                                : "text-sm text-[#202124] pb-6 sm:pb-10 ml-2"
+                            }`}
+                            style={{ whiteSpace: "pre-line" }}
+                          >
+                            {scoreToShow}
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div
+                            className={`${
+                              theme === "dark"
+                                ? "text-sm text-gray-400 pb-6 sm:pb-10 ml-2 sm:ml-14"
+                                : "text-sm text-[#202124] pb-6 sm:pb-10 ml-2 sm:ml-8"
+                            }`}
+                            style={{ whiteSpace: "pre-line" }}
+                          >
+                            {scoreToShow}
+                          </div>
+                          <div className="flex flex-col items-center">
+                            <img
+                              src={teamLogo}
+                              alt={teamName}
+                              className="w-10 h-10 sm:w-8 sm:h-8"
+                            />
+                            <div
+                              className={`mt-2 ${
+                                theme === "dark"
+                                  ? "text-[#ECECEC]"
+                                  : "text-[#1F1F1F]"
+                              } text-sm sm:text-base font-medium`}
+                            >
+                              {
+                                teamInfo?.find((t) => t.name === teamName)
+                                  ?.shortname
+                              }
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                });
 
                 return (
-                  <div
-                    key={teamName}
-                    className="flex items-center justify-between gap-[45px] sm:gap-4"
-                  >
-                    {/* If it's the first team, show logo then score; if second, reverse */}
-                    {index === 0 ? (
-                      <>
-                        <div>
-                          <img
-                            src={team?.img || "default-logo.png"}
-                            alt={team?.shortname || teamName}
-                            className="w-10 h-10 sm:w-8 sm:h-8"
-                          />
-                          <div
-                            className={`mt-2 text-sm sm:text-base font-medium ${
-                              theme === "dark"
-                                ? "text-[#ECECEC]"
-                                : "text-[#1F1F1F]"
-                            }`}
-                          >
-                            {team?.shortname || getShortTeamName(teamName)}
-                          </div>
-                        </div>
-                        <div
-                          className={`pb-6 sm:pb-10 ml-2 sm:ml-14 text-sm ${
-                            theme === "dark"
-                              ? "text-gray-400"
-                              : "text-[#202124]"
-                          }`}
-                        >
-                          {score}
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div
-                          className={`pb-6 sm:pb-10 mr-2 sm:mr-14 text-sm ${
-                            theme === "dark"
-                              ? "text-gray-400"
-                              : "text-[#202124]"
-                          }`}
-                        >
-                          {score}
-                        </div>
-                        <div>
-                          <img
-                            src={team?.img || "default-logo.png"}
-                            alt={team?.shortname || teamName}
-                            className="w-10 h-10 sm:w-8 sm:h-8"
-                          />
-                          <div
-                            className={`mt-2 text-sm sm:text-base font-medium ${
-                              theme === "dark"
-                                ? "text-[#ECECEC]"
-                                : "text-[#1F1F1F]"
-                            }`}
-                          >
-                            {team?.shortname || getShortTeamName(teamName)}
-                          </div>
-                        </div>
-                      </>
-                    )}
+                  <div className="flex items-center justify-between w-full px-4">
+                    {renderedTeams}
                   </div>
                 );
-              })}
-            </div>
-          </>
-        )}
+              })()
+            ) : (
+              // If match is live: Show the fixed team 0 and team 1 layout
+              <>
+                <div className="flex items-center  gap-[100px] sm:gap-36">
+                  {matchData?.teams?.map((teamName, index) => {
+                    // Match score by checking if the inning includes team name
+                    const scoreObj = matchData?.score?.find((s) =>
+                      s.inning?.toLowerCase().includes(teamName.toLowerCase())
+                    );
 
-        {/* <div className="flex justify-between">
-  {[0, 1].map((index) => {
-    const isTeam1 = index === 0;
-    const teamName = index === 0 ? teamName0 : teamName1;
-    const team = matchData?.teams?.[index];
-    const opponentIndex = index === 0 ? 1 : 0;
-    const logo =
-      teamName === teamInfo?.[index]?.name
-        ? teamInfo?.[index]?.img
-        : teamInfo?.[opponentIndex]?.img;
-    const score =
-      team === teamName
-        ? matchData?.score[index]
-        : matchData?.score[opponentIndex];
+                    // Match team info by name
+                    const team = teamInfo?.find((t) => t.name === teamName);
 
-    return (
-      <div
-        key={index}
-        className={`flex items-center ${
-          isTeam1 ? "gap-[45px] sm:gap-4" : "flex-row-reverse gap-[45px] sm:gap-4"
-        }`}
-      >
-        Score
-        <div
-          className={`${
-            theme === "dark"
-              ? "text-sm text-gray-400 pb-6 sm:pb-10"
-              : "text-sm text-[#202124] pb-6 sm:pb-10"
-          } ${isTeam1 ? "ml-2 sm:ml-14" : "mr-2 sm:mr-14"}`}
-        >
-          {formatScore(score)}
-        </div>
+                    // Format score or fallback
+                    const score = scoreObj ? formatScore(scoreObj) : "-";
 
-        Logo + Name
-        <div className={isTeam1 ? "text-left" : "text-right"}>
-          <img
-            src={logo}
-            alt={getShortTeamName(team || "")}
-            className="w-10 h-10 sm:w-8 sm:h-8"
-          />
+                    return (
+                      <div
+                        key={teamName}
+                        className="flex items-center justify-between gap-[45px] sm:gap-4"
+                      >
+                        {/* If it's the first team, show logo then score; if second, reverse */}
+                        {index === 0 ? (
+                          <>
+                            <div>
+                              <img
+                                src={team?.img || "default-logo.png"}
+                                alt={team?.shortname || teamName}
+                                className="w-10 h-10 sm:w-8 sm:h-8"
+                              />
+                              <div
+                                className={`mt-2 text-sm sm:text-base font-medium ${
+                                  theme === "dark"
+                                    ? "text-[#ECECEC]"
+                                    : "text-[#1F1F1F]"
+                                }`}
+                              >
+                                {team?.shortname || getShortTeamName(teamName)}
+                              </div>
+                            </div>
+                            <div
+                              className={`pb-6 sm:pb-10 ml-2 sm:ml-14 text-sm ${
+                                theme === "dark"
+                                  ? "text-gray-400"
+                                  : "text-[#202124]"
+                              }`}
+                            >
+                              {score}
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div
+                              className={`pb-6 sm:pb-10 mr-2 sm:mr-14 text-sm ${
+                                theme === "dark"
+                                  ? "text-gray-400"
+                                  : "text-[#202124]"
+                              }`}
+                            >
+                              {score}
+                            </div>
+                            <div>
+                              <img
+                                src={team?.img || "default-logo.png"}
+                                alt={team?.shortname || teamName}
+                                className="w-10 h-10 sm:w-8 sm:h-8"
+                              />
+                              <div
+                                className={`mt-2 text-sm sm:text-base font-medium ${
+                                  theme === "dark"
+                                    ? "text-[#ECECEC]"
+                                    : "text-[#1F1F1F]"
+                                }`}
+                              >
+                                {team?.shortname || getShortTeamName(teamName)}
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+
           <div
-            className={`mt-2 sm:text-base ${
+            className={`${
               theme === "dark"
-                ? "text-[#ECECEC] font-medium"
-                : "text-[#1F1F1F] font-medium"
+                ? "text-sm text-center text-[#BDC1C6]"
+                : " text-center text-[#202124] text-[12px] sm:text-[14px] mt-3"
             }`}
-            style={{ fontSize: "14px" }}
           >
-            {team === teamName
-              ? `${getShortTeamName(teamName)}`
-              : getShortTeamName(matchData?.teams?.[opponentIndex])}
+            {matchData?.status}
+            <br />
           </div>
-        </div>
-      </div>
-    );
-  })}
-</div> */}
-
-        {/* Team 2 */}
-
-        {/* <div className="flex items-center gap-[45px] sm:gap-4">
-          <div className="text-sm text-gray-400 pb-6 sm:pb-10 mr-2 sm:mr-14">
-            {formatScore(secondTeamScore)}
+          <div
+            className={`${
+              theme === "dark"
+                ? "text-xs text-center text-gray-400 mb-2"
+                : "text-xs text-center text-[#5E5E5E] mb-2 text-[12px]"
+            }`}
+          >
+            {matchData?.matchType.toUpperCase()} {matchnumber}
           </div>
-          <div>
-            <img
-              src={secondTeamLogo}
-              alt={secondTeamShortName}
-              className="w-10 h-10 sm:w-8 sm:h-8"
-            />
-            <div
-              className={`${
-                theme === "dark"
-                  ? "mt-1 text-sm sm:text-base text-[#ECECEC] font-medium"
-                  : "mt-1 sm:text-base text-[#1F1F1F] font-medium text-[14px]"
-              }`}
-            >
-              {secondTeamShortName}
-            </div>
-          </div>
-        </div> */}
-      </div>
 
-      <div
-        className={`${
-          theme === "dark"
-            ? "text-sm text-center text-[#BDC1C6]"
-            : " text-center text-[#202124] text-[12px] sm:text-[14px] mt-3"
-        }`}
-      >
-        {matchData?.status}
-        <br />
-      </div>
-      <div
-        className={`${
-          theme === "dark"
-            ? "text-xs text-center text-gray-400 mb-2"
-            : "text-xs text-center text-[#5E5E5E] mb-2 text-[12px]"
-        }`}
-      >
-        {matchData?.matchType.toUpperCase()} {matchnumber}
-      </div>
-
-      <Tabs
-        defaultValue="scorecard"
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="w-full"
-      >
-        {/* <TabsList className="w-full  text-gray-400 h-12  bg-[#101218]  flex">
+          <Tabs
+            defaultValue="scorecard"
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
+            {/* <TabsList className="w-full  text-gray-400 h-12  bg-[#101218]  flex">
           <TabsTrigger
             value="summary"
             className="flex-1 h-full data-[state=active]:border-b-2 data-[state=active]:border-white data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:shadow-none"
@@ -565,15 +546,24 @@ const MatchCard = () => {
             SCORECARD
           </TabsTrigger>
         </TabsList> */}
-        {/* <TabsContent value="summary">
+            {/* <TabsContent value="summary">
           <MatchSummaryTab data={matchData} teamLogos={teamLogos} />
         </TabsContent> */}
-        <TabsContent value="scorecard">
-          <ScoreCardTab data={matchData} />
-        </TabsContent>
-      </Tabs>
-    </div>
+            <TabsContent value="scorecard">
+              <ScoreCardTab data={matchData} />
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        <div className="text-gray-700  w-[25%]   border-gray-300 bg-white rounded-lg">
+          {/* Chat box floating on bottom right */}
+          <ChatBox />
+        </div>
+      </div>
+    </>
   );
 };
 
 export default MatchCard;
+
+// utils/cookie.js
