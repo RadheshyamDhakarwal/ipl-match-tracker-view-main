@@ -15,7 +15,6 @@ const NewsDetails = () => {
       const res = await fetch(`/api/cricindia/newsapi.php`);
       const data = await res.json();
       setLatest(data);
-      console.log(data, "data");
     } catch (error) {
       console.error("Fetch error:", error);
     }
@@ -58,7 +57,7 @@ const NewsDetails = () => {
         Loading...
       </div>
     );
-
+// console.log(news?.data ? JSON.parse(news.data)?.teamInfo : [],"news?.data?.teamInfo")
   return (
     <div className="mt-12 ">
       <div className="max-w-[1100px] mx-auto px-4  shadow-lg">
@@ -106,18 +105,19 @@ const NewsDetails = () => {
                 __html: DOMPurify.sanitize(news.long_description),
               }}
             ></div>
-            <hr className="my-4" />
-
             {news?.scorecard_link && (
+              
               <Link
                 to={`/match-preview/${slug}/${news?.scorecard_link}`}
-                state={{ data: news.data }} // ← Send data here
+               state={{ teamInfo: news?.data ? JSON.parse(news.data)?.teamInfo : [] }} // ← Send data here
               >
-                <div className="text-blue-600 underline hover:text-blue-800 cursor-pointer">
-                  hyperlink
+                <div className="text-blue-600  hover:text-[#223577] cursor-pointer">
+                  Full Scorecard
                 </div>
               </Link>
             )}
+            <hr className="my-4" />
+
 
             {/* <div className="text-gray-800">
               {news?.data}

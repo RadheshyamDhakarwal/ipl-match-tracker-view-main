@@ -54,15 +54,16 @@ export type MatchData = {
 const MatchCard = () => {
   const { id } = useParams();
   const location = useLocation();
-  const { teamLogos, firstBattingTeam, matchnumber, teamInfo, data } =
+  const { teamLogos, firstBattingTeam, matchnumber, teamInfo } =
     (location.state || {}) as {
       teamLogos?: string[];
       firstBattingTeam?: number;
       matchnumber?: any;
       teamInfo?: any;
-      data?: any;
+      // data?: any;
     };
-  // console.log(JSON.parse(data));
+
+  console.log(teamInfo, "hlo");
   const [activeTab, setActiveTab] = useState("scorecard");
   const [matchData, setMatchData] = useState<MatchData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -194,32 +195,41 @@ const MatchCard = () => {
   // const team = teamInfo.find((t) => t.name == reorderedTeams);
 
   return (
-    <div
-      className={`${
-        theme === "dark"
-          ? "text-gray-600 bg-[#101218] w-full sm:w-[90%] md:w-[70%] lg:w-[50%] mx-auto rounded-lg shadow-md transition"
-          : "text-gray-600  w-full sm:w-[90%] md:w-[70%] lg:w-[50%] mx-auto rounded-lg shadow-md transition"
-      }`}
-    >
+    <div className="block lg:flex flex-wrap lg:flex-nowrap ">
+      <div className="hidden lg:block text-gray-700 w-[25%] mt-2">
+        <iframe
+          className="ms-2"
+          src="https://widget.taggbox.com/2172117"
+          style={{ height: "100%", border: "none" }}
+        ></iframe>
+      </div>
+
       <div
         className={`${
           theme === "dark"
-            ? "text-sm text-gray-400 mb-2 px-4 pt-6"
-            : "text-sm text-[#5E5E5E] mb-2 px-4 pt-6 flex justify-between"
+            ? "text-gray-600 bg-[#101218] w-full sm:w-[90%] md:w-[70%] lg:w-[50%] mx-auto rounded-lg shadow-md transition"
+            : "text-gray-600  w-full sm:w-[90%] md:w-[70%] mx-auto lg:ms-16 lg:w-[50%]  rounded-lg shadow-md transition"
         }`}
       >
-        <div>
-          <span
-            className={`${
-              theme === "dark" ? "text-gray-400" : "text-[#223577]"
-            }`}
-          >
-            IPL ·
-          </span>{" "}
-          {date}
-        </div>
-        <div className="relative inline-block">
-          {/* {matchData.matchStarted && !matchData?.matchWinner  ? (
+        <div
+          className={`${
+            theme === "dark"
+              ? "text-sm text-gray-400 mb-2 px-4 pt-6"
+              : "text-sm text-[#5E5E5E] mb-2 px-4 pt-6 flex justify-between"
+          }`}
+        >
+          <div>
+            <span
+              className={`${
+                theme === "dark" ? "text-gray-400" : "text-[#223577]"
+              }`}
+            >
+              IPL ·
+            </span>{" "}
+            {date}
+          </div>
+          <div className="relative inline-block">
+            {/* {matchData.matchStarted && !matchData?.matchWinner  ? (
             <>
               <span className="text-green-600 font-bold">Live</span>
               <div className="absolute left-0 right-0 h-[2px] bg-green-600 animate-pulse bottom-0"></div>
@@ -227,223 +237,224 @@ const MatchCard = () => {
           ) : (
             ""
           )} */}
-          {(() => {
-            const matchStart = new Date(matchData?.dateTimeGMT);
-            const today = new Date();
+            {(() => {
+              const matchStart = new Date(matchData?.dateTimeGMT);
+              const today = new Date();
 
-            const isToday = matchStart.toDateString() === today.toDateString();
-            const matchStarted = matchData?.matchStarted;
-            const noWinnerYet = !matchData?.matchWinner;
+              const isToday =
+                matchStart.toDateString() === today.toDateString();
+              const matchStarted = matchData?.matchStarted;
+              const noWinnerYet = !matchData?.matchWinner;
 
-            return matchStarted && noWinnerYet && isToday ? (
-              <>
-                <span className="text-green-600 font-bold">Live</span>
-                <div className="absolute left-0 right-0 h-[2px] bg-green-600 animate-pulse bottom-0"></div>
-              </>
-            ) : (
-              ""
-            );
-          })()}
+              return matchStarted && noWinnerYet && isToday ? (
+                <>
+                  <span className="text-green-600 font-bold">Live</span>
+                  <div className="absolute left-0 right-0 h-[2px] bg-green-600 animate-pulse bottom-0"></div>
+                </>
+              ) : (
+                ""
+              );
+            })()}
+          </div>
         </div>
-      </div>
 
-      <div className="flex  sm:flex  sm:flex-row justify-between items-center text-center mt-4 px-4 sm:px-28  gap-4">
-        {/* Team 1 */}
-        {matchData?.matchEnded ? (
-          // If match has ended: Show the innings-based team order layout
-          matchData?.teams?.length > 0 &&
-          (() => {
-            const inningTeamOrder = [];
-            matchData?.score?.forEach((s) => {
-              const teamName = matchData?.teams?.find((team) =>
-                s.inning?.toLowerCase().includes(team.toLowerCase())
-              );
-              if (teamName) inningTeamOrder.push(teamName);
-            });
+        <div className="flex  sm:flex  sm:flex-row justify-between items-center text-center mt-4 px-4 sm:px-28  gap-4">
+          {/* Team 1 */}
+          {matchData?.matchEnded ? (
+            // If match has ended: Show the innings-based team order layout
+            matchData?.teams?.length > 0 &&
+            (() => {
+              const inningTeamOrder = [];
+              matchData?.score?.forEach((s) => {
+                const teamName = matchData?.teams?.find((team) =>
+                  s.inning?.toLowerCase().includes(team.toLowerCase())
+                );
+                if (teamName) inningTeamOrder.push(teamName);
+              });
 
-            const renderedTeams = [];
+              const renderedTeams = [];
 
-            inningTeamOrder.forEach((teamName, innerIndex) => {
-              const teamLogo =
-                teamInfo?.find((t) => t.name === teamName)?.img ||
-                "default-logo.png";
-              const teamScoreObj = matchData?.score?.find((s) =>
-                s.inning?.toLowerCase().includes(teamName.toLowerCase())
-              );
-
-              const scoreToShow = teamScoreObj
-                ? `${teamScoreObj.r}/${teamScoreObj.w}\n(${teamScoreObj.o})`
-                : "-";
-
-              const isLeft = innerIndex === 0;
-
-              renderedTeams.push(
-                <div
-                  key={teamName}
-                  className="flex items-center gap-2 sm:gap-7"
-                >
-                  {isLeft ? (
-                    <>
-                      <div className="flex flex-col items-center">
-                        <img
-                          src={teamLogo}
-                          alt={teamName}
-                          className="w-10 h-10 sm:w-8 sm:h-8"
-                        />
-                        <div
-                          className={`mt-2 ${
-                            theme === "dark"
-                              ? "text-[#ECECEC]"
-                              : "text-[#1F1F1F]"
-                          } text-sm sm:text-base font-medium`}
-                        >
-                          {
-                            teamInfo?.find((t) => t.name === teamName)
-                              ?.shortname
-                          }
-                        </div>
-                      </div>
-                      <div
-                        className={`${
-                          theme === "dark"
-                            ? "text-sm text-gray-400 pb-6 sm:pb-10 ml-2 sm:ml-14"
-                            : "text-sm text-[#202124] pb-6 sm:pb-10 ml-2"
-                        }`}
-                        style={{ whiteSpace: "pre-line" }}
-                      >
-                        {scoreToShow}
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div
-                        className={`${
-                          theme === "dark"
-                            ? "text-sm text-gray-400 pb-6 sm:pb-10 ml-2 sm:ml-14"
-                            : "text-sm text-[#202124] pb-6 sm:pb-10 ml-2 sm:ml-8"
-                        }`}
-                        style={{ whiteSpace: "pre-line" }}
-                      >
-                        {scoreToShow}
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <img
-                          src={teamLogo}
-                          alt={teamName}
-                          className="w-10 h-10 sm:w-8 sm:h-8"
-                        />
-                        <div
-                          className={`mt-2 ${
-                            theme === "dark"
-                              ? "text-[#ECECEC]"
-                              : "text-[#1F1F1F]"
-                          } text-sm sm:text-base font-medium`}
-                        >
-                          {
-                            teamInfo?.find((t) => t.name === teamName)
-                              ?.shortname
-                          }
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
-              );
-            });
-
-            return (
-              <div className="flex items-center justify-between w-full px-4">
-                {renderedTeams}
-              </div>
-            );
-          })()
-        ) : (
-          // If match is live: Show the fixed team 0 and team 1 layout
-          <>
-            <div className="flex items-center  gap-[100px] sm:gap-36">
-              {matchData?.teams?.map((teamName, index) => {
-                // Match score by checking if the inning includes team name
-                const scoreObj = matchData?.score?.find((s) =>
+              inningTeamOrder.forEach((teamName, innerIndex) => {
+                const teamLogo =
+                  teamInfo?.find((t) => t.name === teamName)?.img ||
+                  "default-logo.png";
+                const teamScoreObj = matchData?.score?.find((s) =>
                   s.inning?.toLowerCase().includes(teamName.toLowerCase())
                 );
 
-                // Match team info by name
-                const team = teamInfo?.find((t) => t.name === teamName);
+                const scoreToShow = teamScoreObj
+                  ? `${teamScoreObj.r}/${teamScoreObj.w}\n(${teamScoreObj.o})`
+                  : "-";
 
-                // Format score or fallback
-                const score = scoreObj ? formatScore(scoreObj) : "-";
+                const isLeft = innerIndex === 0;
 
-                return (
+                renderedTeams.push(
                   <div
                     key={teamName}
-                    className="flex items-center justify-between gap-[45px] sm:gap-4"
+                    className="flex items-center gap-2 sm:gap-7"
                   >
-                    {/* If it's the first team, show logo then score; if second, reverse */}
-                    {index === 0 ? (
+                    {isLeft ? (
                       <>
-                        <div>
+                        <div className="flex flex-col items-center">
                           <img
-                            src={team?.img || "default-logo.png"}
-                            alt={team?.shortname || teamName}
+                            src={teamLogo}
+                            alt={teamName}
                             className="w-10 h-10 sm:w-8 sm:h-8"
                           />
                           <div
-                            className={`mt-2 text-sm sm:text-base font-medium ${
+                            className={`mt-2 ${
                               theme === "dark"
                                 ? "text-[#ECECEC]"
                                 : "text-[#1F1F1F]"
-                            }`}
+                            } text-sm sm:text-base font-medium`}
                           >
-                            {team?.shortname || getShortTeamName(teamName)}
+                            {
+                              teamInfo?.find((t) => t.name === teamName)
+                                ?.shortname
+                            }
                           </div>
                         </div>
                         <div
-                          className={`pb-6 sm:pb-10 ml-2 sm:ml-14 text-sm ${
+                          className={`${
                             theme === "dark"
-                              ? "text-gray-400"
-                              : "text-[#202124]"
+                              ? "text-sm text-gray-400 pb-6 sm:pb-10 ml-2 sm:ml-14"
+                              : "text-sm text-[#202124] pb-6 sm:pb-10 ml-2"
                           }`}
+                          style={{ whiteSpace: "pre-line" }}
                         >
-                          {score}
+                          {scoreToShow}
                         </div>
                       </>
                     ) : (
                       <>
                         <div
-                          className={`pb-6 sm:pb-10 mr-2 sm:mr-14 text-sm ${
+                          className={`${
                             theme === "dark"
-                              ? "text-gray-400"
-                              : "text-[#202124]"
+                              ? "text-sm text-gray-400 pb-6 sm:pb-10 ml-2 sm:ml-14"
+                              : "text-sm text-[#202124] pb-6 sm:pb-10 ml-2 sm:ml-8"
                           }`}
+                          style={{ whiteSpace: "pre-line" }}
                         >
-                          {score}
+                          {scoreToShow}
                         </div>
-                        <div>
+                        <div className="flex flex-col items-center">
                           <img
-                            src={team?.img || "default-logo.png"}
-                            alt={team?.shortname || teamName}
+                            src={teamLogo}
+                            alt={teamName}
                             className="w-10 h-10 sm:w-8 sm:h-8"
                           />
                           <div
-                            className={`mt-2 text-sm sm:text-base font-medium ${
+                            className={`mt-2 ${
                               theme === "dark"
                                 ? "text-[#ECECEC]"
                                 : "text-[#1F1F1F]"
-                            }`}
+                            } text-sm sm:text-base font-medium`}
                           >
-                            {team?.shortname || getShortTeamName(teamName)}
+                            {
+                              teamInfo?.find((t) => t.name === teamName)
+                                ?.shortname
+                            }
                           </div>
                         </div>
                       </>
                     )}
                   </div>
                 );
-              })}
-            </div>
-          </>
-        )}
+              });
 
-        {/* <div className="flex justify-between">
+              return (
+                <div className="flex items-center justify-between w-full px-4">
+                  {renderedTeams}
+                </div>
+              );
+            })()
+          ) : (
+            // If match is live: Show the fixed team 0 and team 1 layout
+            <>
+              <div className="flex items-center  gap-[100px] sm:gap-36">
+                {matchData?.teams?.map((teamName, index) => {
+                  // Match score by checking if the inning includes team name
+                  const scoreObj = matchData?.score?.find((s) =>
+                    s.inning?.toLowerCase().includes(teamName.toLowerCase())
+                  );
+
+                  // Match team info by name
+                  const team = teamInfo?.find((t) => t.name === teamName);
+
+                  // Format score or fallback
+                  const score = scoreObj ? formatScore(scoreObj) : "-";
+
+                  return (
+                    <div
+                      key={teamName}
+                      className="flex items-center justify-between gap-[45px] sm:gap-4"
+                    >
+                      {/* If it's the first team, show logo then score; if second, reverse */}
+                      {index === 0 ? (
+                        <>
+                          <div>
+                            <img
+                              src={team?.img || "default-logo.png"}
+                              alt={team?.shortname || teamName}
+                              className="w-10 h-10 sm:w-8 sm:h-8"
+                            />
+                            <div
+                              className={`mt-2 text-sm sm:text-base font-medium ${
+                                theme === "dark"
+                                  ? "text-[#ECECEC]"
+                                  : "text-[#1F1F1F]"
+                              }`}
+                            >
+                              {team?.shortname || getShortTeamName(teamName)}
+                            </div>
+                          </div>
+                          <div
+                            className={`pb-6 sm:pb-10 ml-2 sm:ml-14 text-sm ${
+                              theme === "dark"
+                                ? "text-gray-400"
+                                : "text-[#202124]"
+                            }`}
+                          >
+                            {score}
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div
+                            className={`pb-6 sm:pb-10 mr-2 sm:mr-14 text-sm ${
+                              theme === "dark"
+                                ? "text-gray-400"
+                                : "text-[#202124]"
+                            }`}
+                          >
+                            {score}
+                          </div>
+                          <div>
+                            <img
+                              src={team?.img || "default-logo.png"}
+                              alt={team?.shortname || teamName}
+                              className="w-10 h-10 sm:w-8 sm:h-8"
+                            />
+                            <div
+                              className={`mt-2 text-sm sm:text-base font-medium ${
+                                theme === "dark"
+                                  ? "text-[#ECECEC]"
+                                  : "text-[#1F1F1F]"
+                              }`}
+                            >
+                              {team?.shortname || getShortTeamName(teamName)}
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
+          {/* <div className="flex justify-between">
   {[0, 1].map((index) => {
     const isTeam1 = index === 0;
     const teamName = index === 0 ? teamName0 : teamName1;
@@ -501,9 +512,9 @@ const MatchCard = () => {
   })}
 </div> */}
 
-        {/* Team 2 */}
+          {/* Team 2 */}
 
-        {/* <div className="flex items-center gap-[45px] sm:gap-4">
+          {/* <div className="flex items-center gap-[45px] sm:gap-4">
           <div className="text-sm text-gray-400 pb-6 sm:pb-10 mr-2 sm:mr-14">
             {formatScore(secondTeamScore)}
           </div>
@@ -524,35 +535,35 @@ const MatchCard = () => {
             </div>
           </div>
         </div> */}
-      </div>
+        </div>
 
-      <div
-        className={`${
-          theme === "dark"
-            ? "text-sm text-center text-[#BDC1C6]"
-            : " text-center text-[#202124] text-[12px] sm:text-[14px] mt-3"
-        }`}
-      >
-        {matchData?.status}
-        <br />
-      </div>
-      <div
-        className={`${
-          theme === "dark"
-            ? "text-xs text-center text-gray-400 mb-2"
-            : "text-xs text-center text-[#5E5E5E] mb-2 text-[12px]"
-        }`}
-      >
-        {matchData?.matchType.toUpperCase()} {matchnumber}
-      </div>
+        <div
+          className={`${
+            theme === "dark"
+              ? "text-sm text-center text-[#BDC1C6]"
+              : " text-center text-[#202124] text-[12px] sm:text-[14px] mt-3"
+          }`}
+        >
+          {matchData?.status}
+          <br />
+        </div>
+        <div
+          className={`${
+            theme === "dark"
+              ? "text-xs text-center text-gray-400 mb-2"
+              : "text-xs text-center text-[#5E5E5E] mb-2 text-[12px]"
+          }`}
+        >
+          {matchData?.matchType.toUpperCase()} {matchnumber}
+        </div>
 
-      <Tabs
-        defaultValue="scorecard"
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="w-full"
-      >
-        {/* <TabsList className="w-full  text-gray-400 h-12  bg-[#101218]  flex">
+        <Tabs
+          defaultValue="scorecard"
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="w-full"
+        >
+          {/* <TabsList className="w-full  text-gray-400 h-12  bg-[#101218]  flex">
           <TabsTrigger
             value="summary"
             className="flex-1 h-full data-[state=active]:border-b-2 data-[state=active]:border-white data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:shadow-none"
@@ -566,13 +577,22 @@ const MatchCard = () => {
             SCORECARD
           </TabsTrigger>
         </TabsList> */}
-        {/* <TabsContent value="summary">
+          {/* <TabsContent value="summary">
           <MatchSummaryTab data={matchData} teamLogos={teamLogos} />
         </TabsContent> */}
-        <TabsContent value="scorecard">
-          <ScoreCardTab data={matchData} />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="scorecard">
+            <ScoreCardTab data={matchData} />
+          </TabsContent>
+        </Tabs>
+      </div>
+
+      <div className="block lg:hidden text-gray-700  mt-2">
+        <iframe
+          className="ms-2 "
+          src="https://widget.taggbox.com/2172117"
+          style={{ height: "600px", border: "none", width:"400px" }}
+        ></iframe>
+      </div>
     </div>
   );
 };
