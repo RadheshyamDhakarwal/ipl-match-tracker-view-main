@@ -8,7 +8,6 @@ import ScoreCardTab from "@/components/matchdetails/ScoreCardTab";
 import { useLocation, useParams } from "react-router-dom";
 import Spinner from "./Spinner";
 import { useTheme } from "./ThemeContext";
-import ChatRoom from "./ChatRoom";
 
 export type MatchData = {
   id: string;
@@ -64,7 +63,7 @@ const MatchCard = () => {
       // data?: any;
     };
 
-  console.log(teamInfo, "hlo");
+
   const [activeTab, setActiveTab] = useState("scorecard");
   const [matchData, setMatchData] = useState<MatchData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -209,7 +208,7 @@ const MatchCard = () => {
         className={`${
           theme === "dark"
             ? "text-gray-600 bg-[#101218] w-full sm:w-[90%] md:w-[70%] lg:w-[50%] mx-auto rounded-lg shadow-md transition"
-            : "text-gray-600  w-full sm:w-[90%] md:w-[70%] mx-auto  lg:w-[50%]  rounded-lg shadow-md transition"
+            : "text-gray-600  w-full sm:w-[90%] md:w-[70%] mx-auto lg:ms-16 lg:w-[50%]  rounded-lg shadow-md transition"
         }`}
       >
         <div
@@ -506,9 +505,6 @@ const MatchCard = () => {
         </Tabs>
       </div>
 
-      {/* <div>
-        <ChatRoom matchId={undefined} username={undefined} />
-      </div> */}
       <div className="block lg:hidden text-gray-700  mt-2">
         <iframe
           className="ms-2 "

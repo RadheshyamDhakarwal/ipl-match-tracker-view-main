@@ -66,10 +66,7 @@ const IsJsonString = (str) => {
         Loading...
       </div>
     );
-  console.log('news.data:', news?.data);
-console.log('Parsed:', JSON.parse(news?.data || '{}'));
 
-  // console.log(news?.data ? JSON.parse(news.data)?.teamInfo : [],"news?.data?.teamInfo")
   return (
     <div className="mt-12 ">
       <div className="max-w-[1100px] mx-auto px-4  shadow-lg">

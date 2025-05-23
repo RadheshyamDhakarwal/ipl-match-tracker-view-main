@@ -10,7 +10,7 @@ const NewsList = () => {
     const res = await axios.get("http://localhost:5500/api/newslist");
     setNews(res.data);
   };
-  // console.log(news[0].image,"newsimage")
+ 
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:5500/api/delete-news/${id}`);
