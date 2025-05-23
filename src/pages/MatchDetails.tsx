@@ -8,6 +8,7 @@ import ScoreCardTab from "@/components/matchdetails/ScoreCardTab";
 import { useLocation, useParams } from "react-router-dom";
 import Spinner from "./Spinner";
 import { useTheme } from "./ThemeContext";
+import ChatRoom from "./ChatRoom";
 
 export type MatchData = {
   id: string;
@@ -208,7 +209,7 @@ const MatchCard = () => {
         className={`${
           theme === "dark"
             ? "text-gray-600 bg-[#101218] w-full sm:w-[90%] md:w-[70%] lg:w-[50%] mx-auto rounded-lg shadow-md transition"
-            : "text-gray-600  w-full sm:w-[90%] md:w-[70%] mx-auto lg:ms-16 lg:w-[50%]  rounded-lg shadow-md transition"
+            : "text-gray-600  w-full sm:w-[90%] md:w-[70%] mx-auto  lg:w-[50%]  rounded-lg shadow-md transition"
         }`}
       >
         <div
@@ -453,88 +454,7 @@ const MatchCard = () => {
               </div>
             </>
           )}
-
-          {/* <div className="flex justify-between">
-  {[0, 1].map((index) => {
-    const isTeam1 = index === 0;
-    const teamName = index === 0 ? teamName0 : teamName1;
-    const team = matchData?.teams?.[index];
-    const opponentIndex = index === 0 ? 1 : 0;
-    const logo =
-      teamName === teamInfo?.[index]?.name
-        ? teamInfo?.[index]?.img
-        : teamInfo?.[opponentIndex]?.img;
-    const score =
-      team === teamName
-        ? matchData?.score[index]
-        : matchData?.score[opponentIndex];
-
-    return (
-      <div
-        key={index}
-        className={`flex items-center ${
-          isTeam1 ? "gap-[45px] sm:gap-4" : "flex-row-reverse gap-[45px] sm:gap-4"
-        }`}
-      >
-        Score
-        <div
-          className={`${
-            theme === "dark"
-              ? "text-sm text-gray-400 pb-6 sm:pb-10"
-              : "text-sm text-[#202124] pb-6 sm:pb-10"
-          } ${isTeam1 ? "ml-2 sm:ml-14" : "mr-2 sm:mr-14"}`}
-        >
-          {formatScore(score)}
-        </div>
-
-        Logo + Name
-        <div className={isTeam1 ? "text-left" : "text-right"}>
-          <img
-            src={logo}
-            alt={getShortTeamName(team || "")}
-            className="w-10 h-10 sm:w-8 sm:h-8"
-          />
-          <div
-            className={`mt-2 sm:text-base ${
-              theme === "dark"
-                ? "text-[#ECECEC] font-medium"
-                : "text-[#1F1F1F] font-medium"
-            }`}
-            style={{ fontSize: "14px" }}
-          >
-            {team === teamName
-              ? `${getShortTeamName(teamName)}`
-              : getShortTeamName(matchData?.teams?.[opponentIndex])}
-          </div>
-        </div>
-      </div>
-    );
-  })}
-</div> */}
-
-          {/* Team 2 */}
-
-          {/* <div className="flex items-center gap-[45px] sm:gap-4">
-          <div className="text-sm text-gray-400 pb-6 sm:pb-10 mr-2 sm:mr-14">
-            {formatScore(secondTeamScore)}
-          </div>
-          <div>
-            <img
-              src={secondTeamLogo}
-              alt={secondTeamShortName}
-              className="w-10 h-10 sm:w-8 sm:h-8"
-            />
-            <div
-              className={`${
-                theme === "dark"
-                  ? "mt-1 text-sm sm:text-base text-[#ECECEC] font-medium"
-                  : "mt-1 sm:text-base text-[#1F1F1F] font-medium text-[14px]"
-              }`}
-            >
-              {secondTeamShortName}
-            </div>
-          </div>
-        </div> */}
+         
         </div>
 
         <div
@@ -586,11 +506,14 @@ const MatchCard = () => {
         </Tabs>
       </div>
 
+      {/* <div>
+        <ChatRoom matchId={undefined} username={undefined} />
+      </div> */}
       <div className="block lg:hidden text-gray-700  mt-2">
         <iframe
           className="ms-2 "
           src="https://widget.taggbox.com/2172117"
-          style={{ height: "600px", border: "none", width:"400px" }}
+          style={{ height: "600px", border: "none", width: "400px" }}
         ></iframe>
       </div>
     </div>

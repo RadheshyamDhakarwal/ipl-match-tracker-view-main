@@ -57,6 +57,8 @@ const NewsDetails = () => {
         Loading...
       </div>
     );
+    console.log(news?.data ? JSON.parse(news.data)?.teamInfo : [],"news?.data ? JSON.parse(news.data)?.teamInfo : []")
+    console.log(news?.data,"news?.data")
 // console.log(news?.data ? JSON.parse(news.data)?.teamInfo : [],"news?.data?.teamInfo")
   return (
     <div className="mt-12 ">
