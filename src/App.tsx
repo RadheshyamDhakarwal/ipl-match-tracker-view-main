@@ -61,7 +61,7 @@ const routes = createBrowserRouter([
     ),
   },
    {
-    path: "/match-preview/:slug",
+    path: "/match-preview/:slug/:id",
     element: (
       <MainLayout>
         <MatchDetails />

@@ -8,7 +8,7 @@ const NewsDetails = () => {
   const navigate = useNavigate();
   const [latestNews, setLatest] = useState(null);
   const [news, setNews] = useState(null);
-   const contentRef = useRef(null);
+  const contentRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const fetchNewsList = async () => {
     try {
@@ -25,9 +25,9 @@ const NewsDetails = () => {
     fetchNewsList();
   }, [id]);
 
- const handleClick = (item) => {
+  const handleClick = (item) => {
     setNews(item);
-     window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -63,7 +63,10 @@ const NewsDetails = () => {
     <div className="mt-12 ">
       <div className="max-w-[1100px] mx-auto px-4  shadow-lg">
         {/* <h4 className=" text-[#223577]  text-[24px] font-bold">News</h4> */}
-        <div ref={contentRef} className="grid grid-cols-1 md:grid-cols-12 gap-8 mt-3">
+        <div
+          ref={contentRef}
+          className="grid grid-cols-1 md:grid-cols-12 gap-8 mt-3"
+        >
           {/* Left: Match/News Details (9 columns) */}
 
           <div className="md:col-span-9">
@@ -105,12 +108,18 @@ const NewsDetails = () => {
             ></div>
             <hr className="my-4" />
 
-            {/* <Link to={`/match-preview/${slug}`}>
-                 <div className="text-gray-800">
-                   {news?.scorecard_link}
-                 </div>
-            </Link>
-            <div className="text-gray-800">
+            {news?.scorecard_link && (
+              <Link
+                to={`/match-preview/${slug}/${news?.scorecard_link}`}
+                state={{ data: news.data }} // ← Send data here
+              >
+                <div className="text-blue-600 underline hover:text-blue-800 cursor-pointer">
+                  hyperlink
+                </div>
+              </Link>
+            )}
+
+            {/* <div className="text-gray-800">
               {news?.data}
             </div> */}
           </div>

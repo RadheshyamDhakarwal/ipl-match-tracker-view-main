@@ -54,14 +54,15 @@ export type MatchData = {
 const MatchCard = () => {
   const { id } = useParams();
   const location = useLocation();
-  const { teamLogos, firstBattingTeam, matchnumber, teamInfo } =
+  const { teamLogos, firstBattingTeam, matchnumber, teamInfo, data } =
     (location.state || {}) as {
       teamLogos?: string[];
       firstBattingTeam?: number;
       matchnumber?: any;
       teamInfo?: any;
+      data?: any;
     };
-
+  // console.log(JSON.parse(data));
   const [activeTab, setActiveTab] = useState("scorecard");
   const [matchData, setMatchData] = useState<MatchData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -190,7 +191,7 @@ const MatchCard = () => {
       ? [matchData?.teams[0], matchData?.teams[1]]
       : [matchData?.teams[1], matchData?.teams[0]];
 
-  const team = teamInfo.find((t) => t.name == reorderedTeams);
+  // const team = teamInfo.find((t) => t.name == reorderedTeams);
 
   return (
     <div
