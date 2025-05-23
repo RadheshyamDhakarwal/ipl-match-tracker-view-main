@@ -29,6 +29,15 @@ const NewsDetails = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+const IsJsonString = (str) => {
+  try {
+    JSON.parse(str);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
   useEffect(() => {
     const fetchNewsDetails = async () => {
       try {
@@ -57,9 +66,10 @@ const NewsDetails = () => {
         Loading...
       </div>
     );
-    console.log(news?.data ? JSON.parse(news.data)?.teamInfo : [],"news?.data ? JSON.parse(news.data)?.teamInfo : []")
-    console.log(news?.data,"news?.data")
-// console.log(news?.data ? JSON.parse(news.data)?.teamInfo : [],"news?.data?.teamInfo")
+  console.log('news.data:', news?.data);
+console.log('Parsed:', JSON.parse(news?.data || '{}'));
+
+  // console.log(news?.data ? JSON.parse(news.data)?.teamInfo : [],"news?.data?.teamInfo")
   return (
     <div className="mt-12 ">
       <div className="max-w-[1100px] mx-auto px-4  shadow-lg">
@@ -108,10 +118,15 @@ const NewsDetails = () => {
               }}
             ></div>
             {news?.scorecard_link && (
-              
               <Link
                 to={`/match-preview/${slug}/${news?.scorecard_link}`}
-               state={{ teamInfo: news?.data ? JSON.parse(news.data)?.teamInfo : [] }} // ← Send data here
+                state={{
+                  teamInfo:
+                    news?.data && IsJsonString(news.data)
+                      ? JSON.parse(news.data)?.teamInfo
+                      : [],
+                }}
+                // ← Send data here
               >
                 <div className="text-blue-600  hover:text-[#223577] cursor-pointer">
                   Full Scorecard
@@ -119,7 +134,6 @@ const NewsDetails = () => {
               </Link>
             )}
             <hr className="my-4" />
-
 
             {/* <div className="text-gray-800">
               {news?.data}
