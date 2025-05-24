@@ -29,8 +29,20 @@ const CommentSection = () => {
 
   useEffect(() => {
     if (location.pathname.startsWith("/match-preview/")) {
-        userLogin(true); 
-        fetchChatsList();
+      const userId = Cookies.get("_id");
+      const userName = Cookies.get("name");
+      const userDbId = Cookies.get("p_userid");
+
+      // If user is already logged in (all cookies present), skip login
+      if (!userId && !userName && !userDbId) {
+        userLogin(true); // login if cookies are missing
+      } 
+      
+      /*else {
+        setUser({ _id: userId, name: userName });
+      }*/
+
+      fetchChatsList();
     }
   }, [location.pathname]);
 
@@ -70,7 +82,7 @@ const CommentSection = () => {
     const payload = {
       social_id: userId,
       name: userName,
-      userid:"123"
+      p_userid: "123",
     };
 
     fetch("/api/cricindia/register_user.php", {
@@ -82,25 +94,15 @@ const CommentSection = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.status === "success") {
-           Cookies.set("userid", data?.user?.id, { expires: 365 });
-          //   setMessages((prev) => [
-          //     ...prev,
-          //     { text: "User saved successfully!", sender: "bot" },
-          //   ]);
+        if (data.status === "success" && data.user?.id) {
+          Cookies.set("p_userid", data.user.id, { expires: 365 });
         } else {
-          //   setMessages((prev) => [
-          //     ...prev,
-          //     { text: data.message || "Something went wrong", sender: "bot" },
-          //   ]);
+          console.error("User registration failed:", data.message);
         }
       })
+
       .catch((err) => {
         console.error("API Error:", err);
-        // setMessages((prev) => [
-        //   ...prev,
-        //   { text: "Error sending message", sender: "bot" },
-        // ]);
       });
 
     setInput("");
@@ -111,7 +113,7 @@ const CommentSection = () => {
 
     // If still no userId (first time ever), fallback
     const userId = user._id || Cookies.get("_id");
-    const uID=Cookies.get("userid");
+    const uID = Cookies.get("p_userid");
     const matchId = match_id; // use your actual match_id value
 
     if (!userId) {
@@ -177,8 +179,6 @@ const CommentSection = () => {
           </div>
         </div>
       ))}
-
-     
 
       {/* Input box */}
 
