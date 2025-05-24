@@ -53,7 +53,7 @@ const CommentSection = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "chat_list",
-          match_id: "12453",
+          match_id: match_id,
         }),
       });
       const data = await res.json();
@@ -109,7 +109,7 @@ const CommentSection = () => {
   };
 
   const setMessages = async () => {
-    if (!input.trim()) return;
+    // if (!input.trim()) return;
 
     // If still no userId (first time ever), fallback
     const userId = user._id || Cookies.get("_id");

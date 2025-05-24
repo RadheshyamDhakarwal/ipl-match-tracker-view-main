@@ -529,7 +529,7 @@ const MatchCard = () => {
                   : "flex-1 py-3 rounded-none text-gray-600 data-[state=active]:text-[#1F1F1F] data-[state=active]:border-b-2 data-[state=active]:border-[#1F1F1F] data-[state=active]:bg-transparent data-[state=active]:shadow-none w-full sm:w-auto text-center"
               }`}
             >
-              CHATROOM
+              CHAT&nbsp;ROOM
             </TabsTrigger>
           </TabsList>
           <TabsContent value="videos">
