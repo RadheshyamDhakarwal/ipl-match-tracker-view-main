@@ -337,8 +337,8 @@ const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
         key={match.id}
         to={
           match.matchStarted
-            ? `/match-preview/${match.id}`
-            : `/notstarted/${match.id}`
+            ? `/match-preview/${match.slug}/${match.id}`
+            : `/notstarted/${match.slug}/${match.id}`
         }
         state={{
           teamLogos: match.teamLogos,

@@ -1,11 +1,11 @@
 "use client";
 
-import MatchSummaryTab from "@/components/matchdetails/SummaryTab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
 
 import ScoreCardTab from "@/components/matchdetails/ScoreCardTab";
 import { useLocation, useParams } from "react-router-dom";
+import CommentSection from "./CommentSection";
 import Spinner from "./Spinner";
 import { useTheme } from "./ThemeContext";
 
@@ -63,8 +63,8 @@ const MatchCard = () => {
       // data?: any;
     };
 
-
   const [activeTab, setActiveTab] = useState("scorecard");
+    const [width, setWidth] = useState(window.innerWidth);
   const [matchData, setMatchData] = useState<MatchData | null>(null);
   const [loading, setLoading] = useState(true);
   const { theme, toggleTheme } = useTheme();
@@ -98,6 +98,17 @@ const MatchCard = () => {
       return () => clearInterval(interval);
     }
   }, [id]);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup event listener
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Laptop ke liye 620px, mobile ke liye 370px
+  const iframeWidth = width > 768 ? 620 : 370;
 
   const getShortTeamName = (fullName: string) => {
     return fullName
@@ -196,19 +207,19 @@ const MatchCard = () => {
 
   return (
     <div className="block lg:flex flex-wrap lg:flex-nowrap ">
-      <div className="hidden lg:block text-gray-700 w-[25%] mt-2">
+      {/* <div className="hidden lg:block text-gray-700 w-[25%] mt-2">
         <iframe
           className="ms-2"
           src="https://widget.taggbox.com/2172117"
           style={{ height: "100%", border: "none" }}
         ></iframe>
-      </div>
+      </div> */}
 
       <div
         className={`${
           theme === "dark"
             ? "text-gray-600 bg-[#101218] w-full sm:w-[90%] md:w-[70%] lg:w-[50%] mx-auto rounded-lg shadow-md transition"
-            : "text-gray-600  w-full sm:w-[90%] md:w-[70%] mx-auto lg:ms-16 lg:w-[50%]  rounded-lg shadow-md transition"
+            : "text-gray-600  w-full sm:w-[90%] md:w-[70%] mx-auto  lg:w-[50%]  rounded-lg shadow-md transition"
         }`}
       >
         <div
@@ -453,7 +464,6 @@ const MatchCard = () => {
               </div>
             </>
           )}
-         
         </div>
 
         <div
@@ -482,36 +492,66 @@ const MatchCard = () => {
           onValueChange={setActiveTab}
           className="w-full"
         >
-          {/* <TabsList className="w-full  text-gray-400 h-12  bg-[#101218]  flex">
-          <TabsTrigger
-            value="summary"
-            className="flex-1 h-full data-[state=active]:border-b-2 data-[state=active]:border-white data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:shadow-none"
+          <TabsList
+            // className="w-full  text-gray-400 h-12  bg-[#101218]  flex"
+
+            className={`${
+              theme === "dark"
+                ? "w-full  text-white bg-[#0A0A0A] flex  border-b border-gray-600 p-0 h-auto rounded-none sm:flex-row items-center justify-center gap-2 sm:gap-4"
+                : "w-full  text-white bg-[#f8f9fa] flex  border-b border-[#AEACAC] p-0 h-auto rounded-none sm:flex-row items-center justify-center gap-2 sm:gap-4"
+            }`}
           >
-            SUMMARY
-          </TabsTrigger>
-          <TabsTrigger
-            value="scorecard"
-            className="flex-1 h-full data-[state=active]:border-b-2 data-[state=active]:border-white data-[state=active]:bg-transparent data-[state=active]:text-white"
-          >
-            SCORECARD
-          </TabsTrigger>
-        </TabsList> */}
-          {/* <TabsContent value="summary">
-          <MatchSummaryTab data={matchData} teamLogos={teamLogos} />
-        </TabsContent> */}
+            <TabsTrigger
+              value="videos"
+              className={`${
+                theme === "dark"
+                  ? "flex-1 py-3 rounded-none text-gray-600 data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white data-[state=active]:bg-transparent data-[state=active]:shadow-none w-full sm:w-auto text-center"
+                  : "flex-1 py-3 rounded-none text-gray-600 data-[state=active]:text-[#1F1F1F] data-[state=active]:border-b-2 data-[state=active]:border-[#1F1F1F] data-[state=active]:bg-transparent data-[state=active]:shadow-none w-full sm:w-auto text-center"
+              }`}
+            >
+              VIDEOS
+            </TabsTrigger>
+            <TabsTrigger
+              value="scorecard"
+              className={`${
+                theme === "dark"
+                  ? "flex-1 py-3 rounded-none text-gray-600 data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white data-[state=active]:bg-transparent data-[state=active]:shadow-none w-full sm:w-auto text-center"
+                  : "flex-1 py-3 rounded-none text-gray-600 data-[state=active]:text-[#1F1F1F] data-[state=active]:border-b-2 data-[state=active]:border-[#1F1F1F] data-[state=active]:bg-transparent data-[state=active]:shadow-none w-full sm:w-auto text-center"
+              }`}
+            >
+              SCORECARD
+            </TabsTrigger>
+            <TabsTrigger
+              value="chatRoom"
+              className={`${
+                theme === "dark"
+                  ? "flex-1 py-3 rounded-none text-gray-600 data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white data-[state=active]:bg-transparent data-[state=active]:shadow-none w-full sm:w-auto text-center"
+                  : "flex-1 py-3 rounded-none text-gray-600 data-[state=active]:text-[#1F1F1F] data-[state=active]:border-b-2 data-[state=active]:border-[#1F1F1F] data-[state=active]:bg-transparent data-[state=active]:shadow-none w-full sm:w-auto text-center"
+              }`}
+            >
+              CHATROOM
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="videos">
+            <div className=" text-gray-700  mt-2 w-[25%] h-96">
+              <iframe
+                className="ms-2"
+                src="https://widget.taggbox.com/2172117"
+                style={{ height: "100%", border: "none", width: iframeWidth }}
+              ></iframe>
+            </div>
+          </TabsContent>
           <TabsContent value="scorecard">
             <ScoreCardTab data={matchData} />
+          </TabsContent>
+           <TabsContent value="chatRoom">
+            {/* <ScoreCardTab data={matchData} /> */}
+            <CommentSection/>
           </TabsContent>
         </Tabs>
       </div>
 
-      <div className="block lg:hidden text-gray-700  mt-2">
-        <iframe
-          className="ms-2 "
-          src="https://widget.taggbox.com/2172117"
-          style={{ height: "600px", border: "none", width: "400px" }}
-        ></iframe>
-      </div>
+      
     </div>
   );
 };

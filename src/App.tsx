@@ -77,7 +77,7 @@ const routes = createBrowserRouter([
     ),
   },
   {
-    path: "/notstarted/:id",
+    path: "/notstarted/:slug/:id",
     element: (
       <MainLayout>
         <NotStartedMatch />
