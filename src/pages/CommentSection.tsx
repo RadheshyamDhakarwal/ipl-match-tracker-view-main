@@ -38,7 +38,7 @@ const CommentSection = () => {
     console.log(savedAvatar, "savedAvatar");
     const savedUserId = Cookies.get("p_userid");
     console.log(savedUserId, "savedUserId");
-    if (savedId && savedName && savedUserId) {
+    if ( savedName && savedUserId) {
       setUser({ _id: savedId, name: savedName, avatarUrl: savedAvatar });
       setIsLoggedIn(true); // ✅ Set to true only if user is registered
       console.log("true");
@@ -130,22 +130,18 @@ const CommentSection = () => {
       userLogin();
       console.log("userLogin")
       setUser({ _id: id, name: name, avatarUrl: avatarUrl });
-      const savedId = Cookies.get("social_id");
-      // console.log(savedId, "savedId");
-      const savedName = Cookies.get("name");
-      // console.log(savedName, "savedName");
-      const savedAvatar = Cookies.get("avatarUrl");
-      // console.log(savedAvatar, "savedAvatar");
-      const savedUserId = Cookies.get("p_userid");
-      // console.log(savedUserId, "savedUserId");
-      if (savedId && savedName && savedUserId) {
-        setUser({ _id: savedId, name: savedName, avatarUrl: savedAvatar });
-        setIsLoggedIn(true); // ✅ Set to true only if user is registered
-        console.log("true");
-      } else {
-        setIsLoggedIn(false); // ❌ Not logged in
-        console.log("false");
-      }
+      // const savedId = Cookies.get("social_id");
+      // const savedName = Cookies.get("name");
+      // const savedAvatar = Cookies.get("avatarUrl");
+      // const savedUserId = Cookies.get("p_userid");
+      // if (  savedName && savedUserId) {
+      //   setUser({ _id: savedId, name: savedName, avatarUrl: savedAvatar });
+      //   setIsLoggedIn(true); // ✅ Set to true only if user is registered
+      //   console.log("true");
+      // } else {
+      //   setIsLoggedIn(false); // ❌ Not logged in
+      //   console.log("false");
+      // }
       setIsLoggedIn(true);
     } else {
       console.error("Facebook login failed");
