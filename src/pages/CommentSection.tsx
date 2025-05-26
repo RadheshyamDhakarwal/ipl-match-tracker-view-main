@@ -126,7 +126,7 @@ const CommentSection = () => {
       // Update user state
       userLogin();
       setUser({ _id: id, name: name, avatarUrl: avatarUrl });
-      console.log(id,"id",name,"name",avatarUrl,"avatarurl")
+      console.log(id, "id", name, "name", avatarUrl, "avatarurl");
       setIsLoggedIn(true);
     } else {
       console.error("Facebook login failed");
@@ -185,14 +185,32 @@ const CommentSection = () => {
             <div className="flex justify-between items-center">
               <span className="text-[14px] text-[#202124]">{comment.user}</span>
               <span className="text-xs text-gray-500">
-                {new Date(comment.time).toLocaleString("en-US", {
-                  day: "2-digit",
-                  month: "long",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: true, // for AM/PM format
-                })}
+                {(() => {
+                  const commentDate = new Date(comment.time);
+                  const today = new Date();
+
+                  const isToday =
+                    commentDate.getDate() === today.getDate() &&
+                    commentDate.getMonth() === today.getMonth() &&
+                    commentDate.getFullYear() === today.getFullYear();
+
+                  if (isToday) {
+                    return `Today, ${commentDate.toLocaleTimeString("en-US", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}`;
+                  } else {
+                    return commentDate.toLocaleString("en-US", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    });
+                  }
+                })()}
               </span>
             </div>
             <p
@@ -268,7 +286,7 @@ const CommentSection = () => {
           />
         )}
       </div>
-      <ToastContainer toastStyle={{ top: "50px"  }} />
+      <ToastContainer toastStyle={{ top: "50px" }} />
     </div>
   );
 };

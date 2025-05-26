@@ -509,7 +509,7 @@ const MatchCard = () => {
                   : "flex-1 py-3 rounded-none text-gray-600 data-[state=active]:text-[#1F1F1F] data-[state=active]:border-b-2 data-[state=active]:border-[#1F1F1F] data-[state=active]:bg-transparent data-[state=active]:shadow-none w-full sm:w-auto text-center"
               }`}
             >
-              VIDEOS
+              FEEDS
             </TabsTrigger>
             <TabsTrigger
               value="scorecard"
@@ -537,7 +537,7 @@ const MatchCard = () => {
               <iframe
                 className="ms-2"
                 src="https://widget.taggbox.com/2172117"
-                style={{ height: "100%", border: "none", width: iframeWidth }}
+                style={{ height: "550px", border: "none", width: iframeWidth }}
               ></iframe>
             </div>
           </TabsContent>
