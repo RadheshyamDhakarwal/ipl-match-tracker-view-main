@@ -58,6 +58,10 @@
 }
 
 
+.facebook_login{
+  display: flex;
+}
+
 
 
 /* In your global.css or component CSS */
