@@ -502,7 +502,7 @@ const MatchCard = () => {
             }`}
           >
             <TabsTrigger
-              value="videos"
+              value="feeds"
               className={`${
                 theme === "dark"
                   ? "flex-1 py-3 rounded-none text-gray-600 data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-white data-[state=active]:bg-transparent data-[state=active]:shadow-none w-full sm:w-auto text-center"
@@ -532,12 +532,12 @@ const MatchCard = () => {
               CHAT&nbsp;ROOM
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="videos">
-            <div className=" text-gray-700  mt-2 w-[25%] h-96">
+          <TabsContent value="feeds">
+            <div className=" text-gray-700  mt-2 w-[25%] ">
               <iframe
                 className="ms-2"
                 src="https://widget.taggbox.com/2172117"
-                style={{ height: "550px", border: "none", width: iframeWidth }}
+                style={{ height: "600px", border: "none", width: iframeWidth }}
               ></iframe>
             </div>
           </TabsContent>

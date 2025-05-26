@@ -30,13 +30,16 @@ const CommentSection = () => {
   };
 
   useEffect(() => {
-    const savedId = Cookies.get("_id");
+    const savedId = Cookies.get("social_id");
     const savedName = Cookies.get("name");
     const savedAvatar = Cookies.get("avatarUrl");
-    // if (savedId && savedName) {
-    //   setUser({ _id: savedId, name: savedName, avatarUrl: savedAvatar });
-    //   setIsLoggedIn(true);
-    // }
+     const savedUserId = Cookies.get("p_userid");
+     if (savedId && savedName && savedUserId) {
+    setUser({ _id: savedId, name: savedName, avatarUrl: savedAvatar });
+    setIsLoggedIn(true); // ✅ Set to true only if user is registered
+  } else {
+    setIsLoggedIn(false); // ❌ Not logged in
+  }
   }, []);
 
   useEffect(() => {
@@ -91,7 +94,6 @@ const CommentSection = () => {
       user_id: Cookies.get("p_userid"),
       match_id: match_id,
     };
-    console.log("payload", payload);
     try {
       const response = await fetch("https://cric-india.com/chat_api.php", {
         method: "POST",
@@ -111,10 +113,8 @@ const CommentSection = () => {
   };
 
   const responseFacebook = (response: any) => {
-    console.log("response", response);
     if (response.status !== "unknown") {
       const { name, id, picture } = response;
-      console.log(name, id);
       const avatarUrl = picture.data.url;
       // Set cookies
       Cookies.set("_id", id, { expires: 365 });
@@ -126,7 +126,6 @@ const CommentSection = () => {
       // Update user state
       userLogin();
       setUser({ _id: id, name: name, avatarUrl: avatarUrl });
-      console.log(id, "id", name, "name", avatarUrl, "avatarurl");
       setIsLoggedIn(true);
     } else {
       console.error("Facebook login failed");
@@ -135,7 +134,7 @@ const CommentSection = () => {
 
   const userLogin = (skipInputCheck = false) => {
     const userId = Math.floor(1000 + Math.random() * 9000).toString(); // 4-digit user ID
-    const userName = `Guest-${userId}`; // first message as name
+    // const userName = `Guest-${userId}`; // first message as name
     // Cookies.set("_id", userId, { expires: 365 });
     // Cookies.set("name", userName, { expires: 365 });
     // setUser({ _id: userId, name: userName, avatarUrl : Cookies.get('avatarUrl') });
@@ -146,7 +145,6 @@ const CommentSection = () => {
       p_userid: "123",
       avatarUrl: Cookies.get("avatarUrl"),
     };
-    console.log("payl;oad", payload);
     fetch("/api/cricindia/register_user.php", {
       method: "POST",
       headers: {
@@ -170,9 +168,9 @@ const CommentSection = () => {
     setInput("");
   };
   return (
-    <div className="max-w-md mx-auto bg-white border rounded-lg shadow-sm p-4">
+    <div className="max-w-lg mx-auto bg-white border rounded-lg shadow-sm p-4">
       {chatList.map((comment) => (
-        <div key={comment.id} className="mb-4 flex gap-3">
+        <div key={comment.id} className="mb-1 flex gap-3">
           <img
             src={
               comment.avatarUrl ||
@@ -268,7 +266,7 @@ const CommentSection = () => {
       </div>
       <div>
         {showPicker && (
-          <EmojiPicker className="mt-2" onEmojiClick={handleEmojiClick} />
+          <EmojiPicker className="mt-2" style={{width:"450px"}} onEmojiClick={handleEmojiClick} />
         )}
       </div>
       <div
