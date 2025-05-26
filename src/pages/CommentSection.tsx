@@ -120,12 +120,13 @@ const CommentSection = () => {
       Cookies.set("_id", id, { expires: 365 });
       Cookies.set("name", name, { expires: 365 });
       Cookies.set("avatarUrl", avatarUrl, { expires: 365 });
-      Cookies.get("_id", id, { expires: 365 });
-      Cookies.get("name", name, { expires: 365 });
-      Cookies.get("avatarUrl", avatarUrl, { expires: 365 });
+      Cookies.get("_id");
+      Cookies.get("name");
+      Cookies.get("avatarUrl");
       // Update user state
       userLogin();
       setUser({ _id: id, name: name, avatarUrl: avatarUrl });
+      console.log(id,"id",name,"name",avatarUrl,"avatarurl")
       setIsLoggedIn(true);
     } else {
       console.error("Facebook login failed");
@@ -211,7 +212,7 @@ const CommentSection = () => {
 
       <div
         className="relative w-full max-w-md flex gap-1"
-        onClick={() => {
+        onMouseEnter={() => {
           if (!isLoggedIn) {
             toast.error("Please log-in first to write a comment");
           }
