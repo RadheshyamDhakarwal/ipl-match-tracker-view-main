@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import DOMPurify from "dompurify";
 import Spinner from "./Spinner";
+import { FaShareAlt, FaShareAltSquare } from "react-icons/fa";
 
 const NewsDetails = () => {
   const { slug, id } = useParams();
@@ -93,6 +94,7 @@ const NewsDetails = () => {
                   day: "numeric",
                 })}
               </div>
+            <span> <FaShareAlt className="text-blue-600 h-8 w-5" /></span>
             </div>
             {news.is_display == 1 && (
               <img

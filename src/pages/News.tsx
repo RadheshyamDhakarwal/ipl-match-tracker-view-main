@@ -171,7 +171,7 @@ const News = () => {
                 <div className="flex flex-col md:flex-row">
                   {/* News Image */}
                   <div className="md:w-1/1 w-half h-48 md:h-auto p-2 ">
-                    {news.is_display === 1 && (
+                    {news.is_display == 1 && (
                       <img
                         src={news.image}
                         alt={news.news_title}

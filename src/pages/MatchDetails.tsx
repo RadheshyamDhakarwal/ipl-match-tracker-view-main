@@ -54,17 +54,18 @@ export type MatchData = {
 const MatchCard = () => {
   const { id } = useParams();
   const location = useLocation();
-  const { teamLogos, firstBattingTeam, matchnumber, teamInfo } =
+  const { teamLogos, firstBattingTeam, matchnumber, teamInfo, video_url } =
     (location.state || {}) as {
       teamLogos?: string[];
       firstBattingTeam?: number;
       matchnumber?: any;
       teamInfo?: any;
+      video_url?: any;
       // data?: any;
     };
 
   const [activeTab, setActiveTab] = useState("scorecard");
-    const [width, setWidth] = useState(window.innerWidth);
+  const [width, setWidth] = useState(window.innerWidth);
   const [matchData, setMatchData] = useState<MatchData | null>(null);
   const [loading, setLoading] = useState(true);
   const { theme, toggleTheme } = useTheme();
@@ -533,25 +534,23 @@ const MatchCard = () => {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="feeds">
-            <div className=" text-gray-700  mt-2 w-[25%] ">
+            <div className=" text-gray-700  mt-2  ">
               <iframe
-                className="ms-2"
-                src="https://widget.taggbox.com/2172117"
-                style={{ height: "600px", border: "none", width: iframeWidth }}
+                src={video_url}
+                style={{ width:"100%", height: "600px", border: "none" }}
+                allowFullScreen
               ></iframe>
             </div>
           </TabsContent>
           <TabsContent value="scorecard">
             <ScoreCardTab data={matchData} />
           </TabsContent>
-           <TabsContent value="chatRoom">
+          <TabsContent value="chatRoom">
             {/* <ScoreCardTab data={matchData} /> */}
-            <CommentSection/>
+            <CommentSection />
           </TabsContent>
         </Tabs>
       </div>
-
-      
     </div>
   );
 };

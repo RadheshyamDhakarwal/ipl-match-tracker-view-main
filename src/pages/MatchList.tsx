@@ -5,6 +5,7 @@ import { useTheme } from "./ThemeContext";
 
 const MatchList = () => {
   const [matches, setMatches] = useState([]);
+  const [feeds,setFeeds]=useState([])
   const [livematches, setLiveMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const todayRef = useRef<HTMLAnchorElement | null>(null);
@@ -21,6 +22,7 @@ const MatchList = () => {
       const response = await fetch("/api/cricindia/getmatches.php");
       const data = await response.json();
       hasSetTodayRef.current = false;
+      setFeeds(data.video_url_web)
       setMatches(data.matches);
     } catch (error) {
       console.error("Error fetching matches:", error);
@@ -350,6 +352,7 @@ const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
           matchnumber: `${index + 1} of ${totalCount}`,
           matchstype: `${match?.matchType?.toUpperCase()}`,
           teamInfo: match.teamInfo,
+          video_url:feeds
         }}
         ref={isToday ? setTodayMatchRef : null}
         className={`${
