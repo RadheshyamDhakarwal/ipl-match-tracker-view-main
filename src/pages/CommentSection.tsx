@@ -34,7 +34,7 @@ const CommentSection = () => {
     const savedName = Cookies.get("name");
     const savedAvatar = Cookies.get("avatarUrl");
      const savedUserId = Cookies.get("p_userid");
-     if (savedId && savedName && savedUserId) {
+     if (savedName && savedUserId) {
     setUser({ _id: savedId, name: savedName, avatarUrl: savedAvatar });
     setIsLoggedIn(true); // ✅ Set to true only if user is registered
   } else {
@@ -120,9 +120,6 @@ const CommentSection = () => {
       Cookies.set("_id", id, { expires: 365 });
       Cookies.set("name", name, { expires: 365 });
       Cookies.set("avatarUrl", avatarUrl, { expires: 365 });
-      Cookies.get("_id");
-      Cookies.get("name");
-      Cookies.get("avatarUrl");
       // Update user state
       userLogin();
       setUser({ _id: id, name: name, avatarUrl: avatarUrl });
