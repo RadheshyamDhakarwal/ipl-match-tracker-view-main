@@ -31,21 +31,15 @@ const CommentSection = () => {
 
   useEffect(() => {
     const savedId = Cookies.get("social_id");
-    console.log(savedId, "savedId");
     const savedName = Cookies.get("name");
-    console.log(savedName, "savedName");
     const savedAvatar = Cookies.get("avatarUrl");
-    console.log(savedAvatar, "savedAvatar");
-    const savedUserId = Cookies.get("p_userid");
-    console.log(savedUserId, "savedUserId");
-    if ( savedName && savedUserId) {
-      setUser({ _id: savedId, name: savedName, avatarUrl: savedAvatar });
-      setIsLoggedIn(true); // ✅ Set to true only if user is registered
-      console.log("true");
-    } else {
-      setIsLoggedIn(false); // ❌ Not logged in
-      console.log("false");
-    }
+     const savedUserId = Cookies.get("p_userid");
+     if (savedId && savedName && savedUserId) {
+    setUser({ _id: savedId, name: savedName, avatarUrl: savedAvatar });
+    setIsLoggedIn(true); // ✅ Set to true only if user is registered
+  } else {
+    setIsLoggedIn(false); // ❌ Not logged in
+  }
   }, []);
 
   useEffect(() => {
@@ -126,22 +120,12 @@ const CommentSection = () => {
       Cookies.set("_id", id, { expires: 365 });
       Cookies.set("name", name, { expires: 365 });
       Cookies.set("avatarUrl", avatarUrl, { expires: 365 });
+      Cookies.get("_id");
+      Cookies.get("name");
+      Cookies.get("avatarUrl");
       // Update user state
       userLogin();
-      console.log("userLogin")
       setUser({ _id: id, name: name, avatarUrl: avatarUrl });
-      // const savedId = Cookies.get("social_id");
-      // const savedName = Cookies.get("name");
-      // const savedAvatar = Cookies.get("avatarUrl");
-      // const savedUserId = Cookies.get("p_userid");
-      // if (  savedName && savedUserId) {
-      //   setUser({ _id: savedId, name: savedName, avatarUrl: savedAvatar });
-      //   setIsLoggedIn(true); // ✅ Set to true only if user is registered
-      //   console.log("true");
-      // } else {
-      //   setIsLoggedIn(false); // ❌ Not logged in
-      //   console.log("false");
-      // }
       setIsLoggedIn(true);
     } else {
       console.error("Facebook login failed");
@@ -150,7 +134,7 @@ const CommentSection = () => {
 
   const userLogin = (skipInputCheck = false) => {
     const userId = Math.floor(1000 + Math.random() * 9000).toString(); // 4-digit user ID
-    // const userName = `Guest-${userId}`; // first message as name
+    const userName = `Guest-${userId}`; // first message as name
     // Cookies.set("_id", userId, { expires: 365 });
     // Cookies.set("name", userName, { expires: 365 });
     // setUser({ _id: userId, name: userName, avatarUrl : Cookies.get('avatarUrl') });
@@ -161,6 +145,7 @@ const CommentSection = () => {
       p_userid: "123",
       avatarUrl: Cookies.get("avatarUrl"),
     };
+    console.log("payl;oad", payload);
     fetch("/api/cricindia/register_user.php", {
       method: "POST",
       headers: {
@@ -282,11 +267,7 @@ const CommentSection = () => {
       </div>
       <div>
         {showPicker && (
-          <EmojiPicker
-            className="mt-2"
-            style={{ width: "450px" }}
-            onEmojiClick={handleEmojiClick}
-          />
+          <EmojiPicker className="mt-2" style={{width:"450px"}} onEmojiClick={handleEmojiClick} />
         )}
       </div>
       <div

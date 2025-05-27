@@ -288,8 +288,8 @@ const Navbar = () => {
           <NavLinks onClick={() => setMenuOpen(false)} />
         </div>
 
-        <div className="flex items-center mt-2 sm:mt-0">
-          <label className="relative inline-flex items-center cursor-pointer">
+        <div className="flex items-center mt-2 sm:mt-0 ms-3">
+          <label className="relative inline-flex items-center cursor-pointer ">
             <input
               type="checkbox"
               className="sr-only peer"

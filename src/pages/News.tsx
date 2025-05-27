@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 const News = () => {
   const [newsList, setNewsList] = useState(null);
-   const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const fetchNews = async () => {
     try {
       const res = await axios.get("/api/cricindia/newsapi.php");
@@ -18,10 +18,9 @@ const News = () => {
     fetchNews();
   }, []);
 
-
- useEffect(() => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}, []);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   const cards = [
     {
@@ -172,11 +171,13 @@ const News = () => {
                 <div className="flex flex-col md:flex-row">
                   {/* News Image */}
                   <div className="md:w-1/1 w-half h-48 md:h-auto p-2 ">
-                    <img
-                      src={`${news.image}`}
-                      alt={news.news_title}
-                      className="w-half img-wth object-cover rounded-lg"
-                    />
+                    {news.is_display === 1 && (
+                      <img
+                        src={news.image}
+                        alt={news.news_title}
+                        className="w-half img-wth object-cover rounded-lg"
+                      />
+                    )}
                   </div>
                   {/* News Content */}
                   <div className="p-4 md:w-2/3">

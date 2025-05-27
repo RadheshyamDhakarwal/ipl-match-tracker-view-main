@@ -354,7 +354,7 @@ const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
         ref={isToday ? setTodayMatchRef : null}
         className={`${
           theme === "dark"
-            ? "block bg-[#101218] border sm:border-t-0 border-[#3c4043] hover:bg-[#303134]  shadow-lg hover:shadow-xl transition-shadow "
+            ? "block bg-[#101218] border sm:border-t-0  rounded-lg border-[#3c4043]  mt-2 hover:bg-[#303134]  shadow-lg hover:shadow-xl transition-shadow "
             : "block  hover:bg-[#fafafa] border sm:border-t-0 border-[#ebebeb] mt-2  rounded-lg   sm:rounded-none transition-shadow sm:mt-0"
         }`}
       >
@@ -365,7 +365,7 @@ const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
         key={match.id}
         className={`${
           theme === "dark"
-            ? " border  border-t-0 border-[#3c4043]  hover:bg-[#303134] shadow-md opacity-70 cursor-not-allowed"
+            ? " border  border-[#3c4043]   rounded-lg mt-2 hover:bg-[#303134] shadow-md opacity-70 cursor-not-allowed"
             : " border  border-[#ebebeb]  sm:border-t-0  rounded-lg   sm:rounded-none  mt-2 sm:mt-0 opacity-70 cursor-not-allowed"
         }`}
       >

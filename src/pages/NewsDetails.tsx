@@ -2,6 +2,7 @@ import { CalendarDays } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import DOMPurify from "dompurify";
+import Spinner from "./Spinner";
 
 const NewsDetails = () => {
   const { slug, id } = useParams();
@@ -29,14 +30,14 @@ const NewsDetails = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-const IsJsonString = (str) => {
-  try {
-    JSON.parse(str);
-    return true;
-  } catch (e) {
-    return false;
-  }
-};
+  const IsJsonString = (str) => {
+    try {
+      JSON.parse(str);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
 
   useEffect(() => {
     const fetchNewsDetails = async () => {
@@ -63,10 +64,9 @@ const IsJsonString = (str) => {
   if (!loading || !news)
     return (
       <div className="text-center mt-10 text-gray-600 text-lg font-medium">
-        Loading...
+        <Spinner />
       </div>
     );
-
   return (
     <div className="mt-12 ">
       <div className="max-w-[1100px] mx-auto px-4  shadow-lg">
@@ -94,7 +94,7 @@ const IsJsonString = (str) => {
                 })}
               </div>
             </div>
-            {news.image && (
+            {news.is_display == 1 && (
               <img
                 src={`${news.image}`}
                 alt={news.news_title}
@@ -151,7 +151,13 @@ const IsJsonString = (str) => {
                   onClick={() => handleClick(item)}
                 >
                   <div className=" rounded-lg">
-                    <img src={`${item.image}`} alt="" className="rounded-md" />
+                    {news?.is_display === 1 && (
+                      <img
+                        src={`${item.image}`}
+                        alt=""
+                        className="rounded-md"
+                      />
+                    )}
                   </div>
                   <h3 className="text-sm font-medium text-[#4B5563] line-clamp-2 mt-1">
                     {item.news_title}
