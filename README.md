@@ -10,7 +10,7 @@ There are several ways of editing your application.
 
 **Use Lovable**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/1dce1fcc-2d08-4406-a2b0-d6c0e5be76c6) and start prompting.
+Simply visit the [Lovable Project]([https://lovable.dev/projects/1dce1fcc-2d08-4406-a2b0-d6c0e5be76c6](https://cricindia.com/)) and start prompting.
 
 Changes made via Lovable will be committed automatically to this repo.
 
@@ -62,7 +62,7 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/1dce1fcc-2d08-4406-a2b0-d6c0e5be76c6) and click on Share -> Publish.
+Simply open [Lovable]([https://cricindia.com/]) and click on Share -> Publish.
 
 ## Can I connect a custom domain to my Lovable project?
 
