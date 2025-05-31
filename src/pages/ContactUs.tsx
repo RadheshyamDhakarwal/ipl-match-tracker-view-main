@@ -75,7 +75,7 @@ const ContactUs = () => {
       const data = await res.json();
 
       if (res.ok) {
-        toast.success("Message submitted successfully!");
+        toast.success("Message added");
         setForm({ name: "", email: "", message: "" });
         setErrors({});
       } else {
@@ -190,7 +190,7 @@ const ContactUs = () => {
         </div>
       </div>
 
-      <ToastContainer position="top-right" />
+      <ToastContainer position="top-right" toastStyle={{ top: "50px" }}/>
     </div>
   );
 };
