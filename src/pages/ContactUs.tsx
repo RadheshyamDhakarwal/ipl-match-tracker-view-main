@@ -1,7 +1,13 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+type ContactForm = {
+  name: string;
+  email: string;
+  message: string;
+};
+
 const ContactUs = () => {
   const [form, setForm] = useState({
     name: "",
@@ -9,15 +15,48 @@ const ContactUs = () => {
     message: "",
   });
 
+  const [errors, setErrors] = useState<any>({}); // ✅ Error state
+
   const handleChange = (e) => {
     setForm({
       ...form,
       [e.target.name]: e.target.value,
     });
+
+    // Clear error on field change
+    setErrors({ ...errors, [e.target.name]: "" });
+  };
+  const validate = (): Partial<ContactForm> => {
+    const newErrors: Partial<ContactForm> = {};
+
+    if (!form.name.trim()) {
+      newErrors.name = "Name is required";
+    }
+
+    if (!form.email.trim()) {
+      newErrors.email = "Email is required";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(form.email)) {
+        newErrors.email = "Email is not valid";
+      }
+    }
+
+    // if (!form.message.trim()) {
+    //   newErrors.message = "Message is required";
+    // }
+
+    return newErrors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors); // ✅ Set errors
+      return;
+    }
 
     const payload = {
       action: "add_message",
@@ -36,28 +75,17 @@ const ContactUs = () => {
       const data = await res.json();
 
       if (res.ok) {
-        toast.success("Message added");
-        setForm({ name: "", email: "", message: "" }); // Reset form
+        toast.success("Message submitted successfully!");
+        setForm({ name: "", email: "", message: "" });
+        setErrors({});
       } else {
-        alert(data.error || "Something went wrong");
+        toast.error(data.error || "Something went wrong.");
       }
     } catch (err) {
       console.error(err);
-       toast.success("message not submit");
+      toast.error("Message not submitted");
     }
   };
-
-  // const [form, setForm] = useState({ name: "", email: "", message: "" });
-
-  // const handleChange = (e) => {
-  //   setForm({ ...form, [e.target.name]: e.target.value });
-  // };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   alert("Thank you for contacting us!");
-  //   setForm({ name: "", email: "", message: "" });
-  // };
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-6xl">
@@ -75,46 +103,55 @@ const ContactUs = () => {
           className="bg-white p-6 rounded-2xl shadow-md space-y-4"
         >
           <div>
-            {/* <label className="block font-medium mb-1">Name</label> */}
             <input
               type="text"
               name="name"
               value={form.name}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg text-gray-600  px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-600"
-              placeholder="Your name "
-              required
+              className={`w-full border ${
+                errors.name ? "border-red-500" : "border-gray-300"
+              } rounded-lg text-gray-600 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-600`}
+              placeholder="Your name"
             />
+            {errors.name && (
+              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+            )}
           </div>
 
           <div>
-            {/* <label className="block font-medium mb-1 ">Email</label> */}
             <input
-              type="email"
+              type="text"
               name="email"
               value={form.email}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-600"
+              className={`w-full border ${
+                errors.email ? "border-red-500" : "border-gray-300"
+              } rounded-lg text-gray-600 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-600`}
               placeholder="Email@gmail.com"
-              required
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            )}
           </div>
 
           <div>
-            {/* <label className="block font-medium mb-1">Message</label> */}
             <textarea
               name="message"
               value={form.message}
               onChange={handleChange}
-              className="w-full border border-gray-300 text-gray-600  rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-600"
+              className={`w-full border ${
+                errors.message ? "border-red-500" : "border-gray-300"
+              } text-gray-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-600`}
               placeholder="Message"
-              required
             ></textarea>
+            {errors.message && (
+              <p className="text-red-500 text-sm mt-1">{errors.message}</p>
+            )}
           </div>
 
           <button
             type="submit"
-            className="bg-gray-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-gray-600 transition duration-200"
+            className="bg-gray-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-gray-700 transition duration-200"
           >
             Send Message
           </button>
@@ -147,13 +184,13 @@ const ContactUs = () => {
               </a>
             </p>
             {/* <p>
-              📍 Address: C-56, Vrindavan Marg, Shyam Nagar, Jaipur, India
-            </p> */}
+//               📍 Address: C-56, Vrindavan Marg, Shyam Nagar, Jaipur, India
+//             </p> */}
           </div>
         </div>
       </div>
 
-       <ToastContainer toastStyle={{ top: "50px" }} />
+      <ToastContainer position="top-right" />
     </div>
   );
 };
