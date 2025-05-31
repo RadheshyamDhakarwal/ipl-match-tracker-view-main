@@ -103,6 +103,7 @@ const CommentSection = () => {
       const data = await response.json();
       if (data.status === "success") {
         setInput(""); // clear input
+         setShowPicker(false); // close emoji picker ✅
         fetchChatsList(); // refresh chat list
       } else {
         console.error("Error from API:", data.message);
@@ -246,7 +247,7 @@ const CommentSection = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && setMessages()}
-          className="w-full p-2 pr-10 rounded-full border border-gray-300 text-sm focus:outline-none"
+          className="w-full p-2 pr-10 rounded-full border pe-16 border-gray-300 text-sm focus:outline-none"
           placeholder="Write a comment..."
           disabled={!isLoggedIn}
         />
