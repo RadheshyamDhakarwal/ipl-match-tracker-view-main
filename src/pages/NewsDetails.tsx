@@ -4,9 +4,11 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import DOMPurify from "dompurify";
 import Spinner from "./Spinner";
 import ShareButtons from "../components/ShareButtons";
+import { FaArrowLeft, FaArrowRight, FaPlayCircle } from "react-icons/fa";
 
 const NewsDetails = () => {
   const { slug, id } = useParams();
+  const [currentIndex, setCurrentIndex] = useState(null);
   const navigate = useNavigate();
   const [latestNews, setLatest] = useState(null);
   const [news, setNews] = useState(null);
@@ -25,6 +27,33 @@ const NewsDetails = () => {
   useEffect(() => {
     fetchNewsList();
   }, [id]);
+
+  useEffect(() => {
+    if (latestNews?.news && news) {
+      const index = latestNews.news.findIndex(
+        (item) => item.id === news.id || item.slug === news.slug
+      );
+      setCurrentIndex(index);
+    }
+  }, [latestNews, news]);
+
+  const handleNext = () => {
+    if (latestNews?.news && currentIndex < latestNews.news.length - 1) {
+      const nextIndex = currentIndex + 1;
+      setNews(latestNews.news[nextIndex]);
+      setCurrentIndex(nextIndex);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handlePrevious = () => {
+    if (latestNews?.news && currentIndex > 0) {
+      const prevIndex = currentIndex - 1;
+      setNews(latestNews.news[prevIndex]);
+      setCurrentIndex(prevIndex);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   const handleClick = (item) => {
     setNews(item);
@@ -62,12 +91,33 @@ const NewsDetails = () => {
     };
   }, [slug, id]);
 
+  useEffect(() => {
+    if (news) {
+      document.title = news.news_title;
+    }
+  }, [news]);
+
+  // Set meta description
+  let metaDescription = document.querySelector("meta[name='description']");
+
+  if (!metaDescription) {
+    metaDescription = document.createElement("meta");
+    metaDescription.setAttribute("name", "description");
+    document.head.appendChild(metaDescription);
+  }
+
+  metaDescription.setAttribute("content", news?.short_description);
+
   if (!loading || !news)
     return (
       <div className="text-center mt-10 text-gray-600 text-lg font-medium">
         <Spinner />
       </div>
     );
+
+  const matchedVideo = latestNews.match_video.find(
+    (video) => video.match_id === news?.scorecard_link
+  );
   return (
     <div className="mt-12 ">
       <div className="max-w-[1100px] mx-auto px-4  shadow-lg">
@@ -85,17 +135,42 @@ const NewsDetails = () => {
             <p className="text-[14px]  text-gray-600 mb-1">
               {news.short_description}
             </p>
-            <div className="flex items-center gap-6 text-gray-600 mb-1">
-              <div className="flex items-center gap-2">
-                <CalendarDays size={18} />
-                {new Date(news.date_time).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+            <div className="flex  justify-between items-center gap-6 text-gray-600 mb-1">
+              <div>
+                <div className="flex items-center gap-2">
+                  <CalendarDays size={18} />
+                  {new Date(news.date_time).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                  <ShareButtons />
+                </div>
+                {/* <span> <FaShareAlt className="text-blue-600 h-8 w-5" /></span> */}
               </div>
-            {/* <span> <FaShareAlt className="text-blue-600 h-8 w-5" /></span> */}
-            <ShareButtons />
+
+              <div>
+                {matchedVideo && (
+                  <div className="mt-4">
+                    <a
+                      href={matchedVideo.video_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="relative inline-block w-48"
+                    >
+                      <img
+                        src={matchedVideo.thumb_img}
+                        alt="Match Highlights"
+                        className="rounded-md  h-auto hover:opacity-80 transition w-28 "
+                      />
+                      <div className=" absolute top-[45%] right-[70%] text-white">
+                        {" "}
+                        <FaPlayCircle />
+                      </div>
+                    </a>
+                  </div>
+                )}
+              </div>
             </div>
             {news.is_display == 1 && (
               <img
@@ -138,6 +213,41 @@ const NewsDetails = () => {
             {/* <div className="text-gray-800">
               {news?.data}
             </div> */}
+
+            <div className="flex justify-between mt-4 mb-7 ">
+              <button
+                onClick={handlePrevious}
+                disabled={currentIndex === 0}
+                className={`px-4 py-1 rounded text-white font-medium flex  gap-2 items-center ${
+                  currentIndex === 0
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-[#223577] hover:bg-[#223577]"
+                }`}
+              >
+                <span>
+                  <FaArrowLeft />
+                </span>
+                Previous
+              </button>
+              <button
+                onClick={handleNext}
+                disabled={
+                  latestNews?.news &&
+                  currentIndex === latestNews.news.length - 1
+                }
+                className={`px-4 py-1 rounded text-white flex gap-2 items-center font-medium ${
+                  latestNews?.news &&
+                  currentIndex === latestNews.news.length - 1
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-[#223577] hover:bg-[#223577]"
+                }`}
+              >
+                Next{" "}
+                <span>
+                  <FaArrowRight />
+                </span>
+              </button>
+            </div>
           </div>
 
           {/* Right: Latest News (3 columns) */}

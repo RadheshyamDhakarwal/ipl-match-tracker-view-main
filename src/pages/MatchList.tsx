@@ -2,10 +2,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Spinner from "./Spinner";
 import { useTheme } from "./ThemeContext";
+import { IoVideocam, IoVideocamOutline } from "react-icons/io5";
+import { FaPlayCircle } from "react-icons/fa";
 
 const MatchList = () => {
   const [matches, setMatches] = useState([]);
-  const [feeds,setFeeds]=useState([])
+  const [matchesvideo, setMatchesVideo] = useState([]);
+  const [feeds, setFeeds] = useState([]);
   const [livematches, setLiveMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const todayRef = useRef<HTMLAnchorElement | null>(null);
@@ -22,8 +25,9 @@ const MatchList = () => {
       const response = await fetch("/api/cricindia/getmatches.php");
       const data = await response.json();
       hasSetTodayRef.current = false;
-      setFeeds(data.video_url_web)
+      setFeeds(data.video_url_web);
       setMatches(data.matches);
+      setMatchesVideo(data.match_video);
     } catch (error) {
       console.error("Error fetching matches:", error);
     } finally {
@@ -118,12 +122,12 @@ const MatchList = () => {
 
   // Date range
   const startDate = new Date("2025-03-22T00:00:00Z").getTime() + istOffset;
-const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
+  const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
 
   const sortedMatches = [...matches]
     // 1. Filter only matches between 22 March and 25 May
     .filter((match) => {
-      const matchTime = new Date(match.dateTimeGMT).getTime() + istOffset;
+      const matchTime = new Date(match?.dateTimeGMT).getTime() + istOffset;
       return matchTime >= startDate && matchTime <= endDate;
     })
     // 2. Sort purely by match date
@@ -167,7 +171,7 @@ const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
   };
 
   const renderMatchCard = (match: any, index: number) => {
-    const { date, time, diffDays } = formatDateAndTime(match.dateTimeGMT);
+    const { date, time, diffDays } = formatDateAndTime(match?.dateTimeGMT);
     const isToday = diffDays === 0;
     const matchWinner = match?.extra?.matchWinner;
     const matchStarted = match?.matchStarted;
@@ -182,6 +186,7 @@ const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
     });
 
     const isLive = matchStarted && !matchWinner && liveMatch;
+    const video = matchesvideo.find((v) => v.match_id === match.id);
     const matchCardContent = (
       <div className="p-3 sm:p-4">
         {/* Date, type, etc */}
@@ -205,11 +210,11 @@ const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
 
               {(() => {
                 const { date: dateLabel, diffDays } = formatDateAndTime(
-                  match.dateTimeGMT
+                  match?.dateTimeGMT
                 );
 
                 const now = new Date();
-                const matchStart = new Date(match.dateTimeGMT);
+                const matchStart = new Date(match?.dateTimeGMT);
                 const isToday = diffDays === 0;
                 const hasStarted = now >= matchStart;
 
@@ -271,7 +276,6 @@ const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
             const teamFirstScore = parseInt(scores[0]?.r);
             const teamSecondScore = parseInt(scores[1]?.r);
             const hightscore = teamFirstScore > teamSecondScore;
-
             return (
               <div
                 className={`flex items-center  mb-2 text-[14px] ${
@@ -320,21 +324,53 @@ const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
             {`Starts at ${addISTOffsetToTime(time.replace("Starts at ", ""))}`}
           </div>
         )}
-        {match.matchStarted === true && (
-          <div
-            className={`${
-              theme === "dark" ? "text-[#BDC1C2]" : "text-[#202124]"
-            } mt-2 text-[12px] sm:text-[14px]`}
-          >
-            {match.status}
+        <div className=" flex justify-between">
+          <div>
+            {match.matchStarted === true && (
+              <div
+                className={`${
+                  theme === "dark" ? "text-[#BDC1C2]" : "text-[#202124]"
+                } mt-2 text-[12px] sm:text-[14px]`}
+              >
+                {match.status}
+              </div>
+            )}
           </div>
-        )}
+          {video && (
+            <div className="mt-2">
+              <a
+                href={video.video_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="relative">
+                  <img
+                    src={video?.thumb_img}
+                    alt="Match Highlights"
+                    className="rounded-md w-24  hover:opacity-80 transition "
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  <div className=" absolute top-[45%] right-2/4">
+                    {" "}
+                   <FaPlayCircle />
+                  </div>
+                </div>
+              </a>
+            </div>
+          )}
+        </div>
       </div>
     );
 
     if (loading) return <Spinner />;
 
-    return match?.hasSquad  && !(match.matchStarted && (!match?.extra?.score || match?.extra?.score.length === 0)) ? (
+    return match?.hasSquad &&
+      !(
+        match.matchStarted &&
+        (!match?.extra?.score || match?.extra?.score.length === 0)
+      ) ? (
       <Link
         key={match.id}
         to={
@@ -344,7 +380,7 @@ const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
         }
         state={{
           teamLogos: match.teamLogos,
-          dates: match.dateTimeGMT,
+          dates: match?.dateTimeGMT,
           venue: match.venue,
           status: match.status,
           tossWinner: match.tossWinner,
@@ -352,7 +388,8 @@ const endDate = new Date("2025-06-03T23:59:59Z").getTime() + istOffset;
           matchnumber: `${index + 1} of ${totalCount}`,
           matchstype: `${match?.matchType?.toUpperCase()}`,
           teamInfo: match.teamInfo,
-          video_url:feeds
+          video_url: feeds,
+          match_video_url:video
         }}
         ref={isToday ? setTodayMatchRef : null}
         className={`${

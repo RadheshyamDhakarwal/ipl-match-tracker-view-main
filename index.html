@@ -9,10 +9,12 @@
   <meta name="description" content="Lovable Generated Project" />
   <meta name="author" content="Lovable" />
 
+  <!-- home page meta -->
   <meta property="og:title" content="Cricindia - Its Not Just a Game !" />
   <meta property="og:description" content="Cricindia - Its Not Just a Game !" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://cricindia.com/Images/criclogo2.png" />
+
 
   <!-- Open Graph / Facebook -->
   <meta property="og:title" content="Check this out!" />
@@ -47,6 +49,44 @@
   <meta name="twitter:title" content="Cricindia - Its Not Just a Game !" />
   <!-- <meta name="twitter:description" content="Explore this amazing content!" /> -->
   <meta name="twitter:image" content="https://cricindia.com/Images/logoweb.png" />
+
+
+  <script>
+
+
+    const path = window.location.pathname;
+    console.log("Current path:", path);
+
+    const setOrUpdateMeta = (name, content) => {
+      let meta = document.querySelector(`meta[name="${name}"]`);
+      if (!meta) {
+        meta = document.createElement("meta");
+        meta.setAttribute("name", name);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute("content", content);
+    };
+
+    const setTitle = (titleText) => {
+      document.title = titleText;
+    };
+
+    if (path === "/news") {
+      // Home page meta
+      setTitle("Cricindia - Its Not Just a Game !");
+      setOrUpdateMeta("charset", "UTF-8");
+      setOrUpdateMeta("viewport", "width=device-width, initial-scale=1.0");
+      setOrUpdateMeta("description", "Lovable Generated Project");
+      setOrUpdateMeta("author", "Lovable");
+    } else {
+      // Other pages meta
+      setTitle("Cricindia - Another Page");
+      setOrUpdateMeta("description", "You are on another page of Cricindia.");
+      setOrUpdateMeta("author", "Cricindia Team");
+    }
+  </script>
+
+
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-7LQHLZEY26"></script>

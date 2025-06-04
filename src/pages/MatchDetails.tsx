@@ -8,6 +8,8 @@ import { useLocation, useParams } from "react-router-dom";
 import CommentSection from "./CommentSection";
 import Spinner from "./Spinner";
 import { useTheme } from "./ThemeContext";
+import { IoVideocam } from "react-icons/io5";
+import { FaPlayCircle } from "react-icons/fa";
 
 export type MatchData = {
   id: string;
@@ -54,16 +56,22 @@ export type MatchData = {
 const MatchCard = () => {
   const { id } = useParams();
   const location = useLocation();
-  const { teamLogos, firstBattingTeam, matchnumber, teamInfo, video_url } =
-    (location.state || {}) as {
-      teamLogos?: string[];
-      firstBattingTeam?: number;
-      matchnumber?: any;
-      teamInfo?: any;
-      video_url?: any;
-      // data?: any;
-    };
-
+  const {
+    teamLogos,
+    firstBattingTeam,
+    matchnumber,
+    teamInfo,
+    video_url,
+    match_video_url,
+  } = (location.state || {}) as {
+    teamLogos?: string[];
+    firstBattingTeam?: number;
+    matchnumber?: any;
+    teamInfo?: any;
+    video_url?: any;
+    // data?: any;
+    match_video_url?: any;
+  };
   const [activeTab, setActiveTab] = useState("scorecard");
   const [width, setWidth] = useState(window.innerWidth);
   const [matchData, setMatchData] = useState<MatchData | null>(null);
@@ -467,26 +475,55 @@ const MatchCard = () => {
           )}
         </div>
 
-        <div
-          className={`${
-            theme === "dark"
-              ? "text-sm text-center text-[#BDC1C6]"
-              : " text-center text-[#202124] text-[12px] sm:text-[14px] mt-3"
-          }`}
-        >
-          {matchData?.status}
-          <br />
+        <div className=" flex justify-between px-10">
+          <div>
+            <div
+              className={`${
+                theme === "dark"
+                  ? "text-sm text-center text-[#BDC1C6]"
+                  : " text-center text-[#202124] text-[12px] sm:text-[14px] mt-3"
+              }`}
+            >
+              {matchData?.status}
+              <br />
+            </div>
+            <div
+              className={`${
+                theme === "dark"
+                  ? "text-xs text-center text-gray-400 mb-2"
+                  : "text-xs text-center text-[#5E5E5E] mb-2 text-[12px]"
+              }`}
+            >
+              {matchData?.matchType.toUpperCase()} {matchnumber}
+            </div>
+          </div>
+          <div>
+            {match_video_url && (
+              <div className="mt-2">
+                <a
+                  href={match_video_url.video_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="relative">
+                    <img
+                      src={match_video_url?.thumb_img}
+                      alt="Match Highlights"
+                      className="rounded-md w-24  hover:opacity-80 transition "
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <div className=" absolute top-[45%] right-2/4 text-white">
+                      {" "}
+                      <FaPlayCircle />
+                    </div>
+                  </div>
+                </a>
+              </div>
+            )}
+          </div>
         </div>
-        <div
-          className={`${
-            theme === "dark"
-              ? "text-xs text-center text-gray-400 mb-2"
-              : "text-xs text-center text-[#5E5E5E] mb-2 text-[12px]"
-          }`}
-        >
-          {matchData?.matchType.toUpperCase()} {matchnumber}
-        </div>
-
         <Tabs
           defaultValue="scorecard"
           value={activeTab}
@@ -537,7 +574,7 @@ const MatchCard = () => {
             <div className=" text-gray-700  mt-2  ">
               <iframe
                 src={video_url}
-                style={{ width:"100%", height: "600px", border: "none" }}
+                style={{ width: "100%", height: "600px", border: "none" }}
                 allowFullScreen
               ></iframe>
             </div>

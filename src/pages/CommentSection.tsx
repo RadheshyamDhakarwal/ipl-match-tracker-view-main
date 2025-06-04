@@ -167,7 +167,7 @@ const CommentSection = () => {
     setInput("");
   };
   return (
-    <div className="max-w-lg mx-auto bg-white border rounded-lg shadow-sm p-4">
+    <div className="max-w-lg mx-auto bg-white border rounded-lg shadow-sm p-4  min-h-36">
       {chatList.map((comment) => (
         <div key={comment.id} className="mb-1 flex gap-3">
           <img
@@ -225,8 +225,9 @@ const CommentSection = () => {
 
       {/* Input box */}
 
-      <div
-        className="relative w-full max-w-md flex gap-1"
+   <div className="">
+       <div
+        className="relative w-full max-w-md flex gap-1 "
         onMouseEnter={() => {
           if (!isLoggedIn) {
             toast.error("Please log-in first to write a comment");
@@ -263,6 +264,7 @@ const CommentSection = () => {
           😀
         </button>
       </div>
+   </div>
       <div>
         {showPicker && (
           <EmojiPicker className="mt-2" style={{width:"450px"}} onEmojiClick={handleEmojiClick} />
