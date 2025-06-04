@@ -115,7 +115,7 @@ const NewsDetails = () => {
       </div>
     );
 
-  const matchedVideo = latestNews.match_video.find(
+  const matchedVideo = latestNews?.match_video.find(
     (video) => video.match_id === news?.scorecard_link
   );
   return (
@@ -153,13 +153,13 @@ const NewsDetails = () => {
                 {matchedVideo && (
                   <div className="mt-4">
                     <a
-                      href={matchedVideo.video_url}
+                      href={matchedVideo?.video_url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="relative inline-block w-48"
                     >
                       <img
-                        src={matchedVideo.thumb_img}
+                        src={matchedVideo?.thumb_img}
                         alt="Match Highlights"
                         className="rounded-md  h-auto hover:opacity-80 transition w-28 "
                       />
