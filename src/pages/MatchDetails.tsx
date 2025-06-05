@@ -475,7 +475,7 @@ const MatchCard = () => {
           )}
         </div>
 
-        <div className=" flex justify-between px-10">
+        <div className=" flex justify-between pe-10 ps-4">
           <div>
             <div
               className={`${

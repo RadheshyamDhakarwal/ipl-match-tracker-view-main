@@ -2,14 +2,18 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { FaPlayCircle } from "react-icons/fa";
 
 const News = () => {
   const [newsList, setNewsList] = useState(null);
+  const [matchvideo, setMatchVideo] = useState(null);
   const { t, i18n } = useTranslation();
+
   const fetchNews = async () => {
     try {
       const res = await axios.get("/api/cricindia/newsapi.php");
       setNewsList(res.data || []);
+      setMatchVideo(res.data.match_video);
     } catch (error) {
       console.error("Error fetching news:", error);
     }
@@ -44,6 +48,7 @@ const News = () => {
       thumbnail: "https://cricindia.com/Images/addtopsection.jpeg",
     },
   ];
+
   return (
     <div className="max-w-[1100px] mx-auto px-4 py-8">
       <div className="overflow-hidden">
@@ -162,42 +167,66 @@ const News = () => {
             ))}
           </div> */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
-            {newsList?.news?.map((news) => (
-              <Link
-                to={`/news/${news.slug}`}
-                key={news._id}
-                className="block border rounded-lg bg-white hover:shadow-lg transition"
-              >
-                <div className="flex flex-col md:flex-row">
-                  {/* News Image */}
-                  <div className="md:w-1/1 w-half h-48 md:h-auto p-2 ">
-                    {news.is_display == 1 && (
-                      <img
-                        src={news.image}
-                        alt={news.news_title}
-                        className="w-half img-wth object-cover rounded-lg"
-                      />
-                    )}
+            {newsList?.news?.map((news) => {
+              const matchedVideo = matchvideo.find(
+                (v) => v.match_id === news?.scorecard_link
+              );
+
+              return (
+                <Link
+                  to={`/news/${news.slug}`}
+                  key={news._id}
+                  className="block border rounded-lg bg-white hover:shadow-lg transition"
+                >
+                  <div className="flex flex-col md:flex-row">
+                    <div className="p-4 md:w-2/3">
+                      <h3 className="text-md font-bold mb-2 text-gray-600">
+                        {news.news_title}
+                      </h3>
+                      <p className="text-xs text-gray-500 mb-2">
+                        {new Date(news.date_time).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </p>
+                      <p className="text-sm text-gray-700">
+                        {news.short_description}
+                      </p>
+                    </div>
+
+                    <div className="md:w-1/1 w-half h-48 md:h-auto p-2">
+                      {news.is_display === 1 ? (
+                        <img
+                          src={news.image}
+                          alt={news.news_title}
+                          className="w-half img-wth object-cover rounded-lg"
+                        />
+                      ) : (
+                        matchedVideo && (
+                          <a
+                            href={matchedVideo.video_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="relative inline-block w-48"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <img
+                              src={matchedVideo.thumb_img}
+                              alt="Match Highlights"
+                              className="rounded-md h-auto hover:opacity-80 transition"
+                            />
+                            <div className="absolute top-[45%] right-[50%] text-white">
+                              <FaPlayCircle />
+                            </div>
+                          </a>
+                        )
+                      )}
+                    </div>
                   </div>
-                  {/* News Content */}
-                  <div className="p-4 md:w-2/3">
-                    <h3 className="text-md font-bold mb-2 text-gray-600">
-                      {news.news_title}
-                    </h3>
-                    <p className="text-xs text-gray-500 mb-2">
-                      {new Date(news.date_time).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </p>
-                    <p className="text-sm text-gray-700">
-                      {news.short_description}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </div>
         {/* Right Sidebar Section */}

@@ -143,7 +143,7 @@ const CommentSection = () => {
       p_userid: "123",
       avatarUrl: Cookies.get("avatarUrl"),
     };
-    console.log("payl;oad", payload);
+  
     fetch("/api/cricindia/register_user.php", {
       method: "POST",
       headers: {

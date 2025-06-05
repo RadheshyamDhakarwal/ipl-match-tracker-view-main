@@ -200,6 +200,7 @@ const NewsDetails = () => {
                     news?.data && IsJsonString(news.data)
                       ? JSON.parse(news.data)?.teamInfo
                       : [],
+                       match_video_url:matchedVideo
                 }}
                 // ← Send data here
               >
@@ -256,34 +257,50 @@ const NewsDetails = () => {
               Latest News
             </h2>
             <div className="space-y-4">
-              {latestNews?.news?.slice(0, 5).map((item, index) => (
-                <div
-                  key={index}
-                  className={`border rounded p-3 bg-gray-50 hover:bg-gray-100 cursor-pointer transition
-                  `}
-                  onClick={() => handleClick(item)}
-                >
-                  <div className=" rounded-lg">
-                    {news?.is_display === 1 && (
-                      <img
-                        src={`${item.image}`}
-                        alt=""
-                        className="rounded-md"
-                      />
-                    )}
+              {latestNews?.news?.slice(0, 5).map((item, index) => {
+                const matchedVideo = latestNews?.match_video?.find(
+                  (video) => video.match_id === item?.scorecard_link
+                );
+              
+                return (
+                  <div
+                    key={index}
+                    className="border rounded p-3 bg-gray-50 hover:bg-gray-100 cursor-pointer transition"
+                    onClick={() => handleClick(item)}
+                  >
+                    <div className="rounded-lg">
+                      {item.is_display == 1 ? (
+                        <img
+                          src={`${item.image}`}
+                          alt=""
+                          className="rounded-md"
+                        />
+                      ) : matchedVideo ? (
+                        
+                          <img
+                            src={matchedVideo.thumb_img}
+                            alt="Match Highlights"
+                            className="rounded-md h-auto hover:opacity-80 transition"
+                            
+                          />
+                         
+                      
+                      ) : null}
+                    </div>
+
+                    <h3 className="text-sm font-medium text-[#4B5563] line-clamp-2 mt-1">
+                      {item.news_title}
+                    </h3>
+                    <p className="text-xs text-[#6B7280]">
+                      {new Date(item.date_time).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </p>
                   </div>
-                  <h3 className="text-sm font-medium text-[#4B5563] line-clamp-2 mt-1">
-                    {item.news_title}
-                  </h3>
-                  <p className="text-xs text-[#6B7280]">
-                    {new Date(news.date_time).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
